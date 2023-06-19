@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Period;
 use App\Models\SchoolClass;
 use Illuminate\View\View;
 use App\Providers\RouteServiceProvider;
@@ -48,7 +49,7 @@ class ClassController extends Controller
     public function show(string $id)
     {
         $schoolClass = SchoolClass::find($id);
-        return view('class.details', ['class' => $schoolClass]);
+        return view('class.details', ['class' => $schoolClass, 'periods' => Period::all()]);
     }
 
     /**

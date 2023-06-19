@@ -56,7 +56,7 @@
         <div class="mt-4">
             <x-input-label for="parent" :value="__('Parent')" />
             <select name="parent" id="parent"   class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
-            <option value="{{ $student->parent->id }}">{{ $student->parent->name }}</option>
+            <option value="{{ $student->parent !== null ? $student->parent->id : ''}}">{{ $student->parent !== null ? $student->parent->name : '__Select Parent__' }}</option>
             @foreach ($parents as $parent)
                 <option value="{{ $parent->id }}">{{ $parent->name }}</option>
             @endforeach
@@ -92,9 +92,8 @@
 
 
 <!--<x-guest-layout>-->
-
-
-    <div class="accordion" id="par">
+@if ($student->parent !== null)
+  <div class="accordion" id="par">
         <div class="accordion-group">
             <div class="accordion-heading">
                 <a class="accordion-toggle" data-toggle="collapse" data-parent="#par"
@@ -128,8 +127,7 @@
             </div>
         </div>
     </div>
-
-
+@endif
 <!--</x-guest-layout>-->
 
 <section class="space-y-6">

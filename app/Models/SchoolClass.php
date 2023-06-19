@@ -42,4 +42,9 @@ class SchoolClass extends Model
     {
         return $this->hasMany(Students::class, 'class_id');
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comments::class, 'class_id');
+    }
 }

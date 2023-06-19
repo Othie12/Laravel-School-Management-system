@@ -20,7 +20,7 @@
             <x-input-label for="classes" :value="__('Classes that study this subject')" />
             @foreach ($classes as $class)
                 <input type="checkbox" name="classes[]" id="{{$class->name}}" value="{{ $class->id }}"> {{$class->name}}<br>
-            @endforeach   
+            @endforeach
         </div>
 
         <div class="mt-4">

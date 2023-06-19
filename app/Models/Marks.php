@@ -34,4 +34,8 @@ class Marks extends Model
     {
         return $this->belongsTo(Period::class, 'period_id');
     }
+    public function grading()
+    {
+        return Grading::where('marks_from', '<=', $this->mark)->where('marks_to', '>=', $this->mark)->first();
+    }
 }

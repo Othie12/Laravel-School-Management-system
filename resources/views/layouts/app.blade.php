@@ -45,21 +45,29 @@
 					<a class="nav-link" href="{{route('dashboard')}}">Home</a>
 				</li>
 
-                @if (count(Auth::user()->classes) > 0 && count(Auth::user()->subjects) > 0)
+        @if (count(Auth::user()->classes) > 0 && count(Auth::user()->subjects) > 0)
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
                      aria-expanded="false" href="#" id="marksheetDropdown">Create Marksheet</a>
                     <div class="dropdown-menu"  aria-labelledby="marksheetDropdown">
                         @foreach (Auth::user()->classes as $class)
-                                <a class="dropdown-item" href="marksheet/{{ $class->id }}"> {{ $class->name }} </a>
+                                <a class="dropdown-item" href=" {{ route('marksheet', ['class_id' => $class->id])}}"> {{ $class->name }} </a>
                         @endforeach
 					</div>
 				</li>
-                @endif
-				<li class="nav-item">
+        @endif
+				<li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false" href="#" id="academiaDropdown">Academia</a>
+                    <div class="dropdown-menu"  aria-labelledby="academiaDropdown">
                     @if (Auth::user()->class)
-					    <a class="nav-link" href="{{ route('grading') }}">Make Repo</a>
+					    <a class="dropdown-item" href="{{ route('grading') }}">Aggregation</a>
+					    <a class="dropdown-item" href="{{ route('comments')}}">Commenting</a>
                     @endif
+                    @if (in_array(Auth::user()->role, ['dos', 'secretary', 'head_teacher']))
+                        <a class="dropdown-item" href="{{ route('period') }}">Set Year Calendar</a>
+                    @endif
+					</div>
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

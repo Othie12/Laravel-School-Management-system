@@ -79,9 +79,9 @@ class StudentController extends Controller
     /**
      * Show the form for editing the specified student.
      */
-    public function edit(string $id = '1')
+    public function edit(Request $request)
     {
-        //
+        $id = $request->id;
         return view('student.update', ['student' => Students::find($id), 'classes' => SchoolClass::all(),  'parents' => User::where('role', 'parent')->get()]);
     }
 
@@ -125,7 +125,7 @@ class StudentController extends Controller
         //
         $student = Students::find($id);
         $student->delete();
-        return Redirect::to('/');
+        return Redirect::to(route('dashboard'));
 
     }
 }

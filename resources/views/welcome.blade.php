@@ -33,9 +33,9 @@
                 <div class="mt-16">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
                         @foreach ($classes as $clas)
-                        <a href="class-show/{{$clas->id}}" class="scale-100 p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500">
+                        <a href="{{ route('class-show', ['id' => $clas->id]) }}" class="scale-100 p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500">
                             <div>
-                                <div class="h-16 w-16 bg-red-50 dark:bg-red-800/20 flex items-center justify-center rounded-full">
+                                <div class="h-16 w-16 flex items-center justify-center">
                                     @if ($clas->classteacher()->value('profile_pic_filepath'))
                                         <img src="{{ asset('storage/' . $clas->classteacher()->value('profile_pic_filepath')) }}" alt="Profile Image" width="100" class="rounded-md mr-2" style="border-radius: 5%">
                                     @else
@@ -47,9 +47,9 @@
                                     </svg>-->
                                 </div>
 
-                                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">{{$clas->name}}</h2>
+                                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-gray">{{$clas->name}}</h2>
 
-                                <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                                <p class="mt-4 text-gray-500 dark:text-gray text-sm leading-relaxed">
                                     <b>CLASSTEACHER:</b> {{ $clas->classTeacher()->value('name') }} <br><b>GIRLS:</b> {{ $clas->students()->where('sex', 'f')->count() }} <br>
                                     <b>BOYS:</b> {{ $clas->students()->where('sex', 'm')->count() }} <br> <b>TOTAL: </b> {{ $clas->students()->count() }}
                                 </p>
@@ -74,11 +74,15 @@
                         </div>
                     </div>
 
+
+
                     <div class="ml-4 text-center text-sm text-gray-500 dark:text-gray-400 sm:text-right sm:ml-0">
                         Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
                     </div>
                 </div>
             </div>
         </div>
+
+
     </body>
 </html>

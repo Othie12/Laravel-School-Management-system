@@ -35,4 +35,5 @@ class Students extends Model
     {
         return $this->hasMany(Marks::class, 'student_id');
     }
+
 }

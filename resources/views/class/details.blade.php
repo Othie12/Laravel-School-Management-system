@@ -48,12 +48,24 @@
                         <h3> {{ $student->name }} </h3>
                         <p></p>
                         <p>
-                            <a href="#" class="btn btn-primary" role="button">
+                            <a href="{{route('student.edit')}}?id={{$student->id}}" class="btn btn-primary" role="button">
                             Edit
                             </a>
                             <a href="#" class="btn btn-default" role="button">
                             View
                             </a>
+                            <div class="btn-group">
+                                <button class="btn btn-danger">Report Card</button>
+                                <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    @foreach ($periods as $period)
+                                    <li><a href="{{ route('reportcard', ['pid' => $period->id, 'sid' => $student->id])}}">{{ $period->name }} - {{ $period->value(DB::raw('YEAR(date_from)')) }} </a></li>
+
+                                    @endforeach
+                                </ul>
+                                </div>
                         </p>
                     </div>
                 </div>
