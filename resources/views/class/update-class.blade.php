@@ -3,7 +3,7 @@
 @section('content')
 
 <x-guest-layout>
-<form method="POST" action="class-update/{{ $clas->id }}">
+<form method="POST" action="{{ route('class-update', ['id' => $clas->id]) }}">
         @csrf
         @method('patch')
 
@@ -29,7 +29,7 @@
 
         <div class="mt-4">
             <x-primary-button class="ml-4">
-                {{ __('Register') }}
+                {{ __('Update') }}
             </x-primary-button>
         </div>
     </form>

@@ -25,7 +25,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        return view('auth.register', ['subjects' => Subject::all(), 'classes' => SchoolClass::all(), 'teachers' => User::all()]);
+        return view('auth.register', ['subjects' => Subject::all(), 'classes' => SchoolClass::all(), 'teachers' => User::where('role', '!=', 'parent')->get()]);
     }
 
     /**
@@ -40,7 +40,7 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'picture' => 'image|mimes:jpeg,png,jpg|max:2048',
             //'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        ]);Staff member
 
         $user = User::create([
             'name' => $request->name,
@@ -51,13 +51,17 @@ class RegisteredUserController extends Controller
             'contact' => $request->contact,
         ]);
 
-        $subjects = $request->input('subjects', []);
-        foreach($subjects as $subject){
-            $subjectTeacher = SubjectTeacher::create([
-                'subject_id' => $subject,
-                'teacher_id' => $user->id,
-            ]);
+        if($request->has('subjects'))
+        {
+            $subjects = $request->input('subjects', []);
+            foreach($subjects as $subject){
+                $subjectTeacher = SubjectTeacher::create([
+                    'subject_id' => $subject,
+                    'teacher_id' => $user->id,
+                ]);Staff member
+            }
         }
+
 
         if($request->has('classes'))
         {
@@ -80,7 +84,7 @@ class RegisteredUserController extends Controller
         //Auth::login($user);
 
         //return redirect(RouteServiceProvider::HOME);
-        return redirect()->back()->with('status', 'Staff member created successfully.');
+        return redirect()->back()->with('status', 'Created successfully.');
 
     }
 }

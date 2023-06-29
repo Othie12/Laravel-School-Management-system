@@ -6,6 +6,7 @@ use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Models\User;
@@ -52,6 +53,29 @@ class ProfileController extends Controller
         $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    public function updatePhoto(Request $request)
+    {
+          // Get the authenticated user
+        $user = auth()->user();
+
+        // Retrieve the user's current profile photo directory from the database
+        $currentPhotoDirectory = $user->profile_pic_filepath;
+
+        // Delete the current photo from the filesystem
+        if ($currentPhotoDirectory) {
+            Storage::delete($currentPhotoDirectory);
+        }
+
+        // Upload the new photo
+        $newPhotoPath = $request->file('picture')->store('profile_pictures', 'public');
+
+        // Update the user's profile photo with the new photo
+        $user->profile_pic_filepath = $newPhotoPath;
+        $user->save();
+
+        return redirect()->back()->with('status', 'Profile photo updated successfully!');
     }
 
     public function updateOther(Request $request){

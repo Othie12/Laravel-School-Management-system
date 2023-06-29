@@ -32,12 +32,6 @@
             <x-text-input id="dob" type="date" name="dob" :value="old('dob', $student->dob)" />
         </div>
 
-        <!-- picture -->
-        <div class="mt-4">
-            <x-input-label for="picture" :value="__('Picture')" />
-            <a href="{{ 'storage/' . $student->profile_pic_filepath }}"><img src="{{ asset('storage/' . $student->profile_pic_filepath) }}" alt="Profile Image" width="100" class="rounded-md mr-2"></a>
-            <x-text-input id="picture" type="file" name="picture" />
-        </div>
 
         <!-- Class -->
         <div class="mt-4">
@@ -82,12 +76,35 @@
 
         <input type="hidden" name="id" value="{{ $student->id }}">
 
-        <div>
+        <div class="mt-4">
             <x-primary-button class="ml-4">
                 {{ __('Update') }}
             </x-primary-button>
         </div>
     </form>
+
+
+    <div class="accordion" id="profilepic">
+        <form action="{{ route('student.update.photo') }}" method="post" enctype="multipart/form-data">
+            @csrf
+            @method('patch')
+            <!-- picture -->
+            <div class="mt-4">
+                <x-input-label for="picture" :value="__('Picture')" />
+                <a href="{{ 'storage/' . $student->profile_pic_filepath }}"><img src="{{ asset('storage/' . $student->profile_pic_filepath) }}" alt="Profile Image" width="100" class="rounded-md mr-2"></a>
+                <x-text-input id="picture" type="file" name="picture" required/>
+            </div>
+
+            <input type="hidden" name="id" value="{{ $student->id }}">
+
+            <div class="mt-4">
+                <x-primary-button class="ml-4">
+                    {{ __('Update') }}
+                </x-primary-button>
+            </div>
+        </form>
+    </div>
+
 </x-guest-layout>
 
 

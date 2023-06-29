@@ -3,7 +3,7 @@
 @section('content')
 
 <x-guest-layout>
-    <form method="POST" onsubmit="validate()" action="{{ route('period.create') }}">
+    <form method="POST" onsubmit="validate()" action="{{ route('period.create') }}" class="dark:text-gray-300 dark:border-gray-300">
         @csrf
 
 <div class="mt-4">

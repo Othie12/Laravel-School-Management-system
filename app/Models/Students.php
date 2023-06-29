@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Students extends Model
 {
@@ -19,6 +20,8 @@ class Students extends Model
         'class_id',
         'custom_ct_comm',
         'custom_ht_comm',
+        'times_promoted',
+        'last_promoted',
     ];
 
     public function parent()
@@ -34,6 +37,19 @@ class Students extends Model
     public function marks()
     {
         return $this->hasMany(Marks::class, 'student_id');
+    }
+
+    public function periods()
+    {
+        return Period::where('date_to', '>=', $this->created_at)->get();
+    }
+
+    public function already_promoted(): bool
+    {
+        if ($this->last_promoted) {
+            return $this->last_promoted->value(DB::raw('YEAR(date_from)')) === Carbon::now()->year ? true : false;
+        }
+        return false;
     }
 
 }

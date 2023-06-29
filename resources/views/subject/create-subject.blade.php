@@ -3,6 +3,8 @@
 @section('content')
 
 <x-guest-layout>
+    <div class="row">
+        <div class="col-sm-6 col-md-6">
 
 <form method="POST" action="{{ route('subject-reg') }}">
         @csrf
@@ -15,7 +17,7 @@
         </div>
 
 
-        <!-- Class teacher -->
+        <!-- Classes -->
         <div class="mt-4">
             <x-input-label for="classes" :value="__('Classes that study this subject')" />
             @foreach ($classes as $class)
@@ -29,6 +31,21 @@
             </x-primary-button>
         </div>
     </form>
+
+    </div>
+    <div class="col-sm-6 col-md-6">
+        <table class="table table-striped table-hover">
+            @foreach ($subjects as $subject)
+                <tr>
+                    <th>{{ $subject->name }}</th>
+                    <td><a href="{{ route('subject-edit', ['id' => $subject->id]) }}"><button class="btn btn-info">Edit</button></a></td>
+                </tr>
+            @endforeach
+        </table>
+    </div>
+</div>
+
+
 </x-guest-layout>
 
 

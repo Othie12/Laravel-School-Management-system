@@ -32,7 +32,7 @@
         </script>
 
 </head>
-<body>
+<body class="dark:bg-gray-700">
 	<!-- Navbar -->
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="position: sticky ; top: 0; z-index:1;" >
 		<a class="navbar-brand" href="#">School Management System</a>
@@ -75,21 +75,23 @@
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 						@if (Auth::user()->role === 'admini')
-						<a class="dropdown-item" href="{{ route('register') }}">Teacher Registration</a>
+						<a class="dropdown-item" href="{{ route('register') }}">Staff</a>
 						@endif
-						<a class="dropdown-item" href="{{ route('student.create') }}">Student Registration</a>
-						<a class="dropdown-item" href="{{ route('class-reg') }}">Class Registration</a>
-						<a class="dropdown-item" href="{{ route('subject-reg') }}">Subject Registration</a>
+						<a class="dropdown-item" href="{{ route('student.create') }}">Student</a>
+						<a class="dropdown-item" href="{{ route('class-reg') }}">Class</a>
+						<a class="dropdown-item" href="{{ route('subject-reg') }}">Subject</a>
 						<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="#">Other Registration</a>
+						<a class="dropdown-item" href="{{ route('parent') }}">Parent</a>
+						<a class="dropdown-item" href="{{ route('requirements.create') }}">Requirements</a>
 					</div>
 				</li>
 			</ul>
 
 			<ul class="navbar-nav ml-auto">
+                <li class="nav-item" style=""><span class="badge badge-info">{{ str_replace('-', '/', session('today')) }}</span></li>
+                <li class="nav-item"><img src="{{ asset('storage/' . Auth::user()->profile_pic_filepath) }}" alt="Profile Image" width="30" class="rounded-circle mr-2"></li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						<img src="{{ asset('storage/' . Auth::user()->profile_pic_filepath) }}" alt="Profile Image" width="30" class="rounded-circle mr-2">
 						{{ Auth::user()->name }}
 					</a>
 					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
@@ -106,8 +108,8 @@
 	</nav>
 
 	<!-- Page Content -->
-	<div class="container">
-		@yield('content')
+	<div class="container dark:text-gray-300 dark:border-gray-300" >
+            @yield('content')
 	</div>
 
 	<!-- Include jQuery and Bootstrap JS -->

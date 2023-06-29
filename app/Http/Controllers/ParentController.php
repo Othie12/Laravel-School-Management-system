@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class ParentController extends Controller
 {
@@ -19,7 +20,7 @@ class ParentController extends Controller
      */
     public function create()
     {
-        //
+        return view('parent.create', ['parents' => User::where('role', 'parent')->get()]);
     }
 
     /**
@@ -27,17 +28,21 @@ class ParentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //first validate
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'picture' => 'image|mimes:jpeg,png,jpg|max:2048',
+        ]);
 
-
-                $parent = Parents::create([
-                    'name' => $request->parent_name,
-                    'email' => $request->parent_email,
-                    'sex' => $request->parent_sex,
-                    'contact' => $request->parent_contact,
-                    'password' => Hash::make("password"),
-                    'role' => 'parent',
-                ]);
+        $parent = User::create([
+            'name' => $request->parent_name,
+            'email' => $request->parent_email,
+            'sex' => $request->parent_sex,
+            'contact' => $request->parent_contact,
+            'password' => Hash::make("password"),
+            'role' => 'parent',
+        ]);
 
     }
 

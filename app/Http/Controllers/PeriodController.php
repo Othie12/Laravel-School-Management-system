@@ -50,22 +50,7 @@ class PeriodController extends Controller
         $second_end = $request->second_end;
         $third_begin = $request->third_begin;
         $third_end = $request->third_end;
-/*
-        $fb = Carbon::parse($request->first_begin);
-        $fe = Carbon::parse($request->first_end);
-        $sb = Carbon::parse($request->second_begin);
-        $se = Carbon::parse($request->second_end);
-        $tb = Carbon::parse($request->third_begin);
-        $te = Carbon::parse($request->third_end);
 
-        if($fe->isBefore($fb) || $se->isBefore($sb) || $te->isBefore($tb)){
-            return redirect()->back()->with('status', 'You have set start date greater than the end date.');
-        }elseif($fe->isAfter($sb) || $se->isAfter($tb)){
-            return redirect()->back()->with('status', 'Your dates are not realistic.');
-        }elseif($currentYear !== $fb->year || $currentYear !== $fe->year || $currentYear !== $sb->year || $currentYear !== $se->year || $currentYear !== $sb->year || $currentYear !== $te->year){
-            return redirect()->back()->with('status', 'You can only set calendar for this year.');
-        }
-*/
         //store terms, begining and end dates in the db
         $term1 = Period::create([
             'name' => 'First term',

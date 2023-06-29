@@ -17,6 +17,7 @@ class Requirements extends Model
         'name',
         'quantity',
         'price',
+        'compulsary'
     ];
 
     public function class()

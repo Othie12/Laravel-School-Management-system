@@ -26,7 +26,7 @@ class SubjectController extends Controller
     public function create()
     {
         //
-        return view('subject.create-subject', ['classes' => SchoolClass::all()]);
+        return view('subject.create-subject', ['classes' => SchoolClass::all(), 'subjects' => Subject::all()]);
     }
 
     /**
@@ -65,6 +65,7 @@ class SubjectController extends Controller
     public function edit(string $id)
     {
         //
+        return view('subject.edit', ['subject' => Subject::find($id), 'classes' => SchoolClass::all()]);
     }
 
     /**
@@ -73,6 +74,20 @@ class SubjectController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $subject = Subject::find($id);
+        $subject->name = $request->name;
+        $subject->save();
+
+        return redirect()->back()->with('status', 'Updated successfuly');
+    }
+
+    public function updateClasses(Request $request, string $id)
+    {
+        $classes = $request->input('classes', []);
+        $subject = Subject::find($id);
+
+        $subject->classes()->sync($classes);
+        return redirect()->back()->with('status', 'ClassList-updated-succesfuly');
     }
 
     /**

@@ -10,8 +10,8 @@ use App\Models\SchoolClass;
 use Illuminate\View\View;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Hash;
-
-
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class StudentController extends Controller
 {
@@ -72,8 +72,7 @@ class StudentController extends Controller
      */
     public function show(string $id)
     {
-        $student = Students::find($id);
-        return view('student.show', ['student' => $student]);
+        return view('student.show', ['student' => Students::find($id)]);
     }
 
     /**
@@ -103,6 +102,28 @@ class StudentController extends Controller
 
     }
 
+    public function updatePhoto(Request $request)
+    {
+         // Get the student
+    $student = Students::find($request->id);
+
+    // Retrieve the student's current profile photo directory from the database
+    $currentPhotoDirectory = $student->profile_pic_filepath;
+
+    // Delete the current photo from the filesystem
+    if ($currentPhotoDirectory) {
+        Storage::delete($currentPhotoDirectory);
+    }
+
+    // Upload the new photo
+    $newPhotoPath = $request->file('picture')->store('profile_pictures', 'public');
+
+    // Update the student's profile photo with the new photo
+    $student->profile_pic_filepath = $newPhotoPath;
+    $student->save();
+
+    return redirect()->back()->with('status', 'Profile photo updated successfully!');
+    }
     /**
      * Get the desired parent from the database
      */
@@ -112,6 +133,26 @@ class StudentController extends Controller
         return response()->json($parents);
     }
 
+    public function promote(Request $request, string $id){
+        if ($student->last_promoted->value(DB::raw('YEAR(date_from)')) === Carbon::now()->year) {
+            return redirect()->back()->with('status', 'Cannot promote twice a year');
+        }else{
+            $student = Students::find($id);
+            $student->times_promoted++;
+            $student->last_promoted = Carbon::now();
+            $student->save();
+            return redirect()->back()->with('status', 'Promoted succesfuly');
+        }
+    }
+
+    public function demote(Request $request, string $id){
+        $student = Students::find($id);
+        $student->times_promoted--;
+        //Need to review the code that returns the previous year(Carbon::now() - 1year)
+        $student->last_promoted = Carbon::now()->subYear;
+        $student->save();
+        return redirect()->back()->with('status', 'Demoted succesfuly');
+    }
     /**
      * Remove the specified resource from storage.
      */

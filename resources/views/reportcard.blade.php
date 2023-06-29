@@ -38,17 +38,24 @@
             ?>
             @foreach ($student->class->subjects as $subject)
             <?php
-                $mark = $subject->marks->where('student_id', $student->id)->where('period_id', $period->id)->first();
-                $totalMarks += $mark->mark;
+                $markMid = $subject->marks->where('student_id', $student->id)->where('period_id', $period->id)->where('type', 'mid')->first();
+                $markEnd = $subject->marks->where('student_id', $student->id)->where('period_id', $period->id)->where('type', 'end')->first();
+                $gradeMid = $markMid->grading() ? $markMid->grading()->grade : 9;
+                $gradeEnd = $markEnd->grading() ? $markEnd->grading()->grade : 9;
+                $agg = ($gradeMid + $gradeEnd) / 2;
+                $mm = $markMid ? $markMid->mark : 0;
+                $me = $markEnd ? $markEnd->mark : 0;
+                $mark = ($mm > 0 && $me > 0) ? ($mm + $me) / 2 : 0;
+                $totalMarks += $mark;
                 $count++;
             ?>
             <tr>
                 <th>{{ $subject->name }}</th>
-                <td>{{ $mark->grading()->grade ? $mark->grading()->grade : 'N/A'}}</td>
-                <td>{{ $mark->grading()->remark ? $mark->grading()->remark : 'N/A'}}</td>
+                <td>{{ $agg }}</td>
+                <td>{{ $markEnd->grading() ? $markEnd->grading()->remark : 'N/A'}}</td>
                 <td>{{ $subject->teachers->first()->name ? $subject->teachers->first()->name : 'N/A'}} </td>
-                <td>{{ $mark ? $mark->mark : 'N/A' }}</td>
-                <?php $totalAgg += $mark->grading()->grade ? $mark->grading()->grade : 0  ?>
+                <td>{{ $mark  }}</td>
+                <?php $totalAgg += $agg  ?>
             </tr>
             @endforeach
 
@@ -70,33 +77,38 @@
         <p><b>Headteacher's comment: </b>{{ $comment->ht_comm ? $comment->ht_comm  : 'Not yet set' }}</p>
         </div>
         <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12">
-        <p><b>Classteacher's comment: </b>{{ $comment->ct_comm }}</p>
+        <p><b>Classteacher's comment: </b>{{ $comment->ct_comm ? $comment->ct_comm  : 'Not yet set' }}</p>
         </div>
 
             <table class="table">
                 <tr>
-                    <th>Next term begins on: <u>23 / 02 / 2023</u0></th>
-                    <th>SchoolFees: <span style="color:red">Shs.53,000</span></th>
+                    <th>Next term begins on: <u>23 / 02 / 2023</u></th>
+                    <th>SchoolFees: <span style="color:red">Shs.{{ $student->class->requirements->where('name', 'schoolfees')->where('period_id', $period->id)->first() ? $student->class->requirements->where('name', 'schoolfees')->where('period_id', $period->id)->first()->price : 'Not set' }}</span></th>
                 </tr>
             </table>
             <table class="table table-striped">
-                <caption>Other requirements</caption>
+                <h4 align='center' class="text-info">Other requirements</h4>
+            <thead>
                 <tr>
-                    <th>Brooms</th>
-                    <td>3</td>
+                    <th>Name</th>
+                    <th>quantity</th>
+                    <th>price</th>
                 </tr>
-                <tr>
-                    <th>Toilet paper</th>
-                    <td>2</td>
-                </tr>
-                <tr>
-                    <th>Rim</th>
-                    <td>1</td>
-                </tr>
-                <tr>
-                    <th>Study tour</th>
-                    <td>43,000</td>
-                </tr>
+            </thead>
+            <tbody>
+                <?php $requirements = $student->class->requirements()->where('name', '!=', 'schoolfees')->where('period_id', $period->id)->get(); ?>
+                @if (count($requirements) > 0 )
+                    @foreach ($requirements as $item)
+                    <tr>
+                        <th>{{$item->name}}</th>
+                        <td>{{ $item->quantity === 0 ? '-' : $item->quantity}} </td>
+                        <td>{{ $item->price  === null ? '-' : $item->price }}</td>
+                    </tr>
+                    @endforeach
+                @else
+                    <h4 align='center' class="text-error">No requirements yet</h4>
+                @endif
+            </tbody>
             </table>
             @else
             <h2 class="text-error">This student has no marks for this term</h2>

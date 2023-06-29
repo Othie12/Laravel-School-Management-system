@@ -1,12 +1,10 @@
 @extends('layouts.app')
-
-
-
 @section('content')
 
 <div class="jumbotron" align="center">
     <h1>Hello {{Auth::user()->sex === 'm'? 'Sir.' : 'Madam.'}}</h1>
-    <h2>{{ $period->name}} <br> {{$period->date_from }} to {{ $period->date_to }}</h2>
+    <h2 class="text-info">{{ $period->name}} <br><span class="badge badge-info">{{ str_replace('-', '/', $period->date_from) }} to {{ str_replace('-', '/', $period->date_to) }}</span></h2>
+    <x-auth-session-status class="mb-4" :status="session('status')  " />
 </div>
 
 @if (Auth::user()->role === 'head_teacher')
@@ -25,5 +23,18 @@
 </div>
 @endif
 
+@if (Auth::user()->role)
+<div class="btn-group" align="left" style="position: sticky; top: 20%; z-index:1;">
+    <button class="btn btn-danger">Set School Fees</button>
+        <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" style="z-index:1;">
+            @foreach ($classes as $class)
+                    <li><a href="{{ route('requirements.schoolfees', ['class_id' => $class->id])}}">{{ $class->name }}</a></li>
+            @endforeach
+        </ul>
+</div>
+@endif
 @include('welcome');
 @endsection

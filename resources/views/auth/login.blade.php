@@ -1,4 +1,9 @@
 <x-guest-layout>
+    <div class="container">
+    <div class="row">
+        <div class="col-sm-4 col-1 col-md-4 col-lg-4"></div>
+        <div class="col-sm-4 col-10 col-md-4 col-lg-4 dark:border-gray-300">
+
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -44,4 +49,9 @@
             </x-primary-button>
         </div>
     </form>
+</div>
+<div class="col-sm-4 col-1 col-md-4 col-lg-4"></div>
+</div>
+</div>
 </x-guest-layout>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
