@@ -44,10 +44,12 @@ class Students extends Model
         return Period::where('date_to', '>=', $this->created_at)->get();
     }
 
-    public function already_promoted(): bool
+    public function already_promoted()
     {
         if ($this->last_promoted) {
-            return $this->last_promoted->value(DB::raw('YEAR(date_from)')) === Carbon::now()->year ? true : false;
+            $year = Carbon::parse($this->last_promoted)->year;
+
+            return $year === Carbon::now()->year ? true : false;
         }
         return false;
     }

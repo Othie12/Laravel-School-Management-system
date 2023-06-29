@@ -48,6 +48,8 @@ Route::post('/student', [StudentController::class, 'store'])->middleware(['auth'
 Route::get('/student-update', [StudentController::class, 'edit'])->middleware('auth')->name('student.edit');
 Route::patch('/student-update-photo', [StudentController::class, 'updatePhoto'])->middleware(['auth', 'checkUserRole:dos,headteacher,secretary,admini'])->name('student.update.photo');
 Route::patch('/student', [StudentController::class, 'update'])->middleware('auth')->name('student.update');
+Route::patch('/student-promote/{id}', [StudentController::class, 'promote'])->middleware('auth')->name('student.promote');
+Route::patch('/student-demote/{id}', [StudentController::class, 'demote'])->middleware('auth')->name('student.demote');
 Route::delete('/student', [StudentController::class, 'destroy'])->middleware('auth')->name('student.destroy');
 
 Route::get('/period', [PeriodController::class, 'resolve'])->middleware(['auth', 'checkUserRole:dos,headteacher,secretary'])->name('period');

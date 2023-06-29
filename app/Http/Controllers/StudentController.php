@@ -134,7 +134,9 @@ class StudentController extends Controller
     }
 
     public function promote(Request $request, string $id){
-        if ($student->last_promoted->value(DB::raw('YEAR(date_from)')) === Carbon::now()->year) {
+        $student = Students::find($id);
+        $year = Carbon::parse($student->last_promoted)->year;
+        if ($student->last_promoted && $year === Carbon::now()->year) {
             return redirect()->back()->with('status', 'Cannot promote twice a year');
         }else{
             $student = Students::find($id);
@@ -147,11 +149,15 @@ class StudentController extends Controller
 
     public function demote(Request $request, string $id){
         $student = Students::find($id);
-        $student->times_promoted--;
-        //Need to review the code that returns the previous year(Carbon::now() - 1year)
-        $student->last_promoted = Carbon::now()->subYear;
-        $student->save();
-        return redirect()->back()->with('status', 'Demoted succesfuly');
+        $year = Carbon::parse($student->last_promoted)->year;
+        if ($student->times_promoted <= 0 && $student->last_promoted && $year === Carbon::now()->subYear()->year) {
+            return redirect()->back()->with('status', 'Can only demote once a year');
+        }else{
+            $student->times_promoted--;
+            $student->last_promoted = Carbon::now()->subYear();
+            $student->save();
+            return redirect()->back()->with('status', 'Demoted succesfuly');
+        }
     }
     /**
      * Remove the specified resource from storage.

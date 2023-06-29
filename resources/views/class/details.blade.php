@@ -30,13 +30,19 @@
                             @endforeach
                             @if (Auth::user()->class !== null)
                                 <td>
-                                    <button class="btn {{ $student->already_promoted ? 'btn-error' : 'btn-info' }}">{{  $student->already_promoted ? 'Demote' : 'Promote'  }}</button>
+                                    <form action="{{ $student->already_promoted() ? route('student.demote', ['id' => $student->id]) : route('student.promote', ['id' => $student->id]) }}" method="post">
+                                        @csrf
+                                        @method('patch')
+                                        <button class="btn {{ $student->already_promoted() ? 'btn-danger' : 'btn-info' }}">{{  $student->already_promoted() ? 'Demote' : 'Promote'  }}</button>
+                                    </form>
                                 </td>
                             @endif
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
+                <x-auth-session-status class="mb-4" :status="session('status')  " />
+
             </div>
 
             <div class="tab-pane active" id="tab2">

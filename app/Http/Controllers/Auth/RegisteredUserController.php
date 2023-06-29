@@ -40,7 +40,7 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'picture' => 'image|mimes:jpeg,png,jpg|max:2048',
             //'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);Staff member
+        ]);//Staff member
 
         $user = User::create([
             'name' => $request->name,
@@ -58,7 +58,7 @@ class RegisteredUserController extends Controller
                 $subjectTeacher = SubjectTeacher::create([
                     'subject_id' => $subject,
                     'teacher_id' => $user->id,
-                ]);Staff member
+                ]);//Staff member
             }
         }
 
