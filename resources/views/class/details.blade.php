@@ -2,6 +2,7 @@
 
 @section('content')
 
+<x-guest-layout>
 
     <div class="tabbable tabs-left">
         <ul class="nav nav-tabs" style="display: flex; justify-content: space-between">
@@ -124,6 +125,6 @@
             </div>
         </div>
     </div>
-
+</x-guest-layout>
 
 @endsection

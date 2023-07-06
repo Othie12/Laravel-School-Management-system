@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+<x-guest-layout>
 
 <div class="row">
     <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
@@ -114,5 +115,6 @@
             <h2 class="text-error">This student has no marks for this term</h2>
             @endif
 </div>
+</x-guest-layout>
 
 @endsection
