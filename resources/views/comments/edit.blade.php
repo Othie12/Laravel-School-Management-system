@@ -2,7 +2,8 @@
 
 @section('content')
 <x-guest-layout>
-    <form method="POST" action="{{ route('comments.update') }}">
+    <div class="row">
+    <form method="POST" action="{{ route('comments.update') }}" class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
         @csrf
         @method('patch')
 
@@ -64,5 +65,6 @@
             </x-primary-button>
         </div>
     </form>
+</div>
 </x-guest-layout>
 @endsection
