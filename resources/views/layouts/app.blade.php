@@ -5,6 +5,14 @@
 	<!-- Include Bootstrap CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
+    <style>
+        @media print {
+          .dont-print {
+            display: none;
+          }
+        }
+      </style>
+
 </head>
 <body class="dark:bg-gray-700">
 	<!-- Navbar -->
@@ -13,7 +21,7 @@
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>-->
-		<div class="collaps navbar-collase" id="navbarNav">
+		<div class="collaps navbar-collapse" id="navbarNav">
 			<ul class="navbar-nav">
 				<li class="nav-item active">
 					<a class="nav-link" href="{{route('dashboard')}}">Home</a>
@@ -59,6 +67,9 @@
 						<a class="dropdown-item" href="{{ route('requirements.create') }}">Requirements</a>
 					</div>
 				</li>
+
+                <li class="nav-item"><button onclick="window.print()" class="dont-print btn btn-info">Print page</button></li>
+
 			</ul>
 
 			<ul class="navbar-nav ml-auto">

@@ -114,5 +114,4 @@
             <h2 class="text-error">This student has no marks for this term</h2>
             @endif
 </div>
-
 @endsection
