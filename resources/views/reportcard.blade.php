@@ -1,17 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-<x-guest-layout>
 
 <div class="row">
-    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+    <div class="col-xs-2 col-2 col-sm-2 col-md-2 col-lg-2">
         <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
     </div>
-    <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8" align='center'>
+    <div class="col-xs-8 col-8 col-sm-8 col-md-8 col-lg-8" align='center'>
         <h1>ABCD NUR &amp PRI SCHOOL</h1>
         <p>Seeta, Mukono Uganda<br>Tel: 0703892783, 0755473844 <br> <b>TERMINAL REPORT</b> </p>
     </div>
-    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+    <div class="col-xs-2 col-2 col-sm-2 col-md-2 col-lg-2">
         <img src="{{ asset('storage/' . $student->profile_pic_filepath) }}" alt="Profile Image" width="100" height="100" class="rounded-md mr-2" style="border-radius: 5%">
     </div>
 </div>
@@ -46,7 +45,7 @@
                 $agg = ($gradeMid + $gradeEnd) / 2;
                 $mm = $markMid ? $markMid->mark : 0;
                 $me = $markEnd ? $markEnd->mark : 0;
-                $mark = ($mm > 0 && $me > 0) ? ($mm + $me) / 2 : 0;
+                $mark = ($mm > 0 || $me > 0) ? ($mm + $me) / 2 : 0;
                 $totalMarks += $mark;
                 $count++;
             ?>
@@ -115,6 +114,5 @@
             <h2 class="text-error">This student has no marks for this term</h2>
             @endif
 </div>
-</x-guest-layout>
 
 @endsection

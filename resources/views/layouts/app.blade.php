@@ -5,41 +5,15 @@
 	<!-- Include Bootstrap CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
-    <script>
-
-        $(document).ready(function () {
-            $('#parent_name').autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: '/parent-autocomplete',
-                        dataType: 'json',
-                        data: {
-                            term: request.term
-                        },
-                        success: function (data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 2 // Minimum characters required to trigger autocomplete
-            });
-        });
-
-        $(document).on('autocompleteselect', '#parent-name', function (event, ui) {
-            $(this).val(ui.item.value);
-        });
-
-        </script>
-
 </head>
 <body class="dark:bg-gray-700">
 	<!-- Navbar -->
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="position: sticky ; top: 0; z-index:1;" >
-		<a class="navbar-brand" href="#">School Management System</a>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="z-index:1;" >
+		<a class="navbar-brand" href="#">School Management System</a><!--
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse" id="navbarNav">
+		</button>-->
+		<div class="collaps navbar-collapse" id="navbarNav">
 			<ul class="navbar-nav">
 				<li class="nav-item active">
 					<a class="nav-link" href="{{route('dashboard')}}">Home</a>

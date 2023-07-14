@@ -13,6 +13,7 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     </head>
     <body class="font-sans text-gray-900 antialiased">
         <div class="min-h-screen flex flex-col dark:bg-gray-700 sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 ">
@@ -22,7 +23,7 @@
                 </a>
             </div>
 
-            <div class="w-full mt-6 px-6 py-4 bg-black dark:text-white-200 shadow-md overflow-hidden sm:rounded-lg">
+            <div class="w-full mt-6 px-6 py-4 bg-gray-700 dark:text-white-200 shadow-md overflow-hidden sm:rounded-lg">
             <x-auth-session-status class="mb-4" :status="session('status')  " />
                 {{ $slot }}
             </div>
