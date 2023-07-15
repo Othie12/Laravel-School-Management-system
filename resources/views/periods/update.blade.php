@@ -4,8 +4,8 @@
 
 <x-guest-layout>
     <div class="row">
-        <div class="col-4 col-sm-4 col-md-4 col-lg-4"></div>
-            <div class="col-4 col-sm-4 col-md-4 col-lg-4">
+        <div class="col-sm-4 col-md-4 col-lg-4"></div>
+            <div class="col-12 col-sm-4 col-md-4 col-lg-4">
                 <form method="POST" action="{{ route('period.update') }}" class="dark:text-gray-300 dark:border-indigo-500">
                     @csrf
                     @method('patch')
@@ -33,7 +33,7 @@
                     </div>
                 </form>
             </div>
-        <div class="col-4 col-sm-4 col-md-4 col-lg-4"></div>
+        <div class="col-sm-4 col-md-4 col-lg-4"></div>
     </div>
 </x-guest-layout>
 @endsection
