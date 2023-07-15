@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'checkPeriod' => \App\Http\Middleware\CheckPeriodId::class,
         'checkct' => \App\Http\Middleware\Checkct::class,
         'validatePeriod' => \App\Http\Middleware\ValidatePeriod::class,
+        'IsReportReady' => \App\Http\Middleware\IsReportReady::class,
     ];
 }

@@ -37,34 +37,31 @@
             $count = 0;//gonna use it to get the total number of subjects which i'll later use to get the optimal overal mark
             ?>
             @foreach ($student->class->subjects as $subject)
-            <?php
-                $markMid = $subject->marks->where('student_id', $student->id)->where('period_id', $period->id)->where('type', 'mid')->first();
-                $markEnd = $subject->marks->where('student_id', $student->id)->where('period_id', $period->id)->where('type', 'end')->first();
-                $gradeMid = $markMid->grading() ? $markMid->grading()->grade : 9;
-                $gradeEnd = $markEnd->grading() ? $markEnd->grading()->grade : 9;
-                $agg = ($gradeMid + $gradeEnd) / 2;
-                $mm = $markMid ? $markMid->mark : 0;
-                $me = $markEnd ? $markEnd->mark : 0;
-                $mark = ($mm > 0 || $me > 0) ? ($mm + $me) / 2 : 0;
-                $totalMarks += $mark;
-                $count++;
-            ?>
-            <tr>
-                <th>{{ $subject->name }}</th>
-                <td>{{ $agg }}</td>
-                <td>{{ $markEnd->grading() ? $markEnd->grading()->remark : 'N/A'}}</td>
-                <td>{{ $subject->teachers->first()->name ? $subject->teachers->first()->name : 'N/A'}} </td>
-                <td>{{ $mark  }}</td>
-                <?php $totalAgg += $agg  ?>
-            </tr>
+                <?php
+                    $markMid = $subject->marks->where('student_id', $student->id)->where('period_id', $period->id)->where('type', 'mid')->first();
+                    $markEnd = $subject->marks->where('student_id', $student->id)->where('period_id', $period->id)->where('type', 'end')->first();
+                    $gradeMid = $markMid->grading() ? $markMid->grading()->grade : 9;
+                    $gradeEnd = $markEnd->grading() ? $markEnd->grading()->grade : 9;
+                    $agg = ($gradeMid + $gradeEnd) / 2;
+                    $mm = $markMid ? $markMid->mark : 0;
+                    $me = $markEnd ? $markEnd->mark : 0;
+                    $mark = ($mm > 0 || $me > 0) ? ($mm + $me) / 2 : 0;
+                    $totalMarks += $mark;
+                    $count++;
+                ?>
+                <tr>
+                    <th>{{ $subject->name }}</th>
+                    <td>{{ $agg }}</td>
+                    <td>{{ $markEnd->grading() ? $markEnd->grading()->remark : 'N/A'}}</td>
+                    <td>{{ $subject->teachers->first()->name ? $subject->teachers->first()->name : 'N/A'}} </td>
+                    <td>{{ $mark  }}</td>
+                    <?php $totalAgg += $agg  ?>
+                </tr>
             @endforeach
-
             <tr>
                 <th>Total</th>
                 <th>{{ $totalAgg }}</th>
             </tr>
-
-
         </table>
 
         <?php

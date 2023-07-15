@@ -26,29 +26,28 @@
 				<li class="nav-item active">
 					<a class="nav-link" href="{{route('dashboard')}}">Home</a>
 				</li>
-
-        @if (count(Auth::user()->classes) > 0 && count(Auth::user()->subjects) > 0)
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
-                     aria-expanded="false" href="#" id="marksheetDropdown">Create Marksheet</a>
-                    <div class="dropdown-menu"  aria-labelledby="marksheetDropdown">
-                        @foreach (Auth::user()->classes as $class)
+                @if (count(Auth::user()->classes) > 0 && count(Auth::user()->subjects) > 0)
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false" href="#" id="marksheetDropdown">Create Marksheet</a>
+                        <div class="dropdown-menu"  aria-labelledby="marksheetDropdown">
+                            @foreach (Auth::user()->classes as $class)
                                 <a class="dropdown-item" href=" {{ route('marksheet', ['class_id' => $class->id])}}"> {{ $class->name }} </a>
-                        @endforeach
-					</div>
-				</li>
-        @endif
+                            @endforeach
+                        </div>
+                    </li>
+                @endif
 				<li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false" href="#" id="academiaDropdown">Academia</a>
+                        aria-expanded="false" href="#" id="academiaDropdown">Academia</a>
                     <div class="dropdown-menu"  aria-labelledby="academiaDropdown">
-                    @if (Auth::user()->class)
-					    <a class="dropdown-item" href="{{ route('grading') }}">Aggregation</a>
-					    <a class="dropdown-item" href="{{ route('comments')}}">Commenting</a>
-                    @endif
-                    @if (in_array(Auth::user()->role, ['dos', 'secretary', 'head_teacher']))
-                        <a class="dropdown-item" href="{{ route('period') }}">Set Year Calendar</a>
-                    @endif
+                        @if (Auth::user()->class)
+                            <a class="dropdown-item" href="{{ route('grading') }}">Aggregation</a>
+                            <a class="dropdown-item" href="{{ route('comments')}}">Commenting</a>
+                        @endif
+                        @if (in_array(Auth::user()->role, ['dos', 'secretary', 'head_teacher']))
+                            <a class="dropdown-item" href="{{ route('period') }}">Set Year Calendar</a>
+                        @endif
 					</div>
 				</li>
 				<li class="nav-item dropdown">
@@ -56,20 +55,18 @@
 						Register
 					</a>
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						@if (Auth::user()->role === 'admini')
-						<a class="dropdown-item" href="{{ route('register') }}">Staff</a>
+						@if (in_array(Auth::user()->role, ['admini']))
+						    <a class="dropdown-item" href="{{ route('register') }}">Staff</a>
 						@endif
-						<a class="dropdown-item" href="{{ route('student.create') }}">Student</a>
-						<a class="dropdown-item" href="{{ route('class-reg') }}">Class</a>
-						<a class="dropdown-item" href="{{ route('subject-reg') }}">Subject</a>
+                            <a class="dropdown-item" href="{{ route('student.create') }}">Student</a>
+                            <a class="dropdown-item" href="{{ route('class-reg') }}">Class</a>
+                            <a class="dropdown-item" href="{{ route('subject-reg') }}">Subject</a>
 						<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="{{ route('parent') }}">Parent</a>
-						<a class="dropdown-item" href="{{ route('requirements.create') }}">Requirements</a>
+                            <a class="dropdown-item" href="{{ route('parent') }}">Parent</a>
+                            <a class="dropdown-item" href="{{ route('requirements.create') }}">Requirements</a>
 					</div>
 				</li>
-
                 <li class="nav-item"><button onclick="window.print()" class="dont-print btn btn-info">Print page</button></li>
-
 			</ul>
 
 			<ul class="navbar-nav ml-auto">
@@ -81,7 +78,6 @@
 					</a>
 					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
 						<a class="dropdown-item" href="{{ route('profile.edit') }}">My Profile</a>
-
 						<form action="{{ route('logout') }}" method="POST" class="dropdown-item">
 							@csrf
 							<input type="submit" value="Logout">
@@ -93,7 +89,7 @@
 	</nav>
 
 	<!-- Page Content -->
-	<div class="container dark:text-gray-300 dark:border-gray-300" >
+	<div class="dark:text-gray-300 dark:border-gray-300" >
             @yield('content')
 	</div>
 

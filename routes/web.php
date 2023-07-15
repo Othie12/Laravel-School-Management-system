@@ -89,7 +89,7 @@ Route::get('/', function() {
 
 Route::get('/reportcard/{pid}/{sid}', function($pid, $sid) {
     return view('reportcard', ['period' => Period::find($pid), 'student' => Students::find($sid)]);
-})->name('reportcard');
+})->middleware(['auth'])->name('reportcard');
 
 Route::get('register-parent', [ParentController::class, 'create'])->middleware('auth', 'checkUserRole:dos,headteacher,secretary,admini')->name('parent');
 
