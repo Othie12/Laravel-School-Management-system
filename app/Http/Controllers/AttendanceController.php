@@ -43,6 +43,7 @@ class AttendanceController extends Controller
             if($recorded === null){
                 Attendance::create([
                     'student_id' => $student_id,
+                    'date' => now(),
                 ]);
             }
         }
