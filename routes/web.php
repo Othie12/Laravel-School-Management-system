@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PeriodController;
@@ -16,6 +17,7 @@ use App\Models\User;
 use App\Models\Period;
 use App\Models\Students;
 use App\Models\SchoolClass;
+use App\Models\Attendance;
 use Carbon\Carbon;
 
 use Illuminate\Support\Facades\Route;
@@ -73,8 +75,11 @@ Route::patch('/requirements/{id}', [RequirementController::class, 'update'])->mi
 Route::delete('/requirements/{id}', [RequirementController::class, 'destroy'])->middleware(['auth'])->name('requirements.delete');
 Route::get('/parent-autocomplete', [StudentController::class, 'searchParent'])->middleware('auth')->name('parent-autocomplete');
 
+Route::get('/attendance/{class_id}', [AttendanceController::class, 'create'])->middleware(['auth', 'checkct'])->name('attendance.create');
+Route::post('/attendance', [AttendanceController::class, 'store'])->middleware(['auth', 'checkct'])->name('attendance.store');
+
 Route::get('/dashboard', function () {
-    return view('dashboard', ['period' => Period::find(session('period_id')), 'classes' => SchoolClass::all(), 'today' => Carbon::now() ]);
+    return view('dashboard', ['period' => Period::find(session('period_id')), 'classes' => SchoolClass::all(), 'today' => Carbon::now(), 'attendance' => Attendance::where('date', Carbon::now()) ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/marksheet/{class_id}', [MarksController::class, 'create'])->middleware(['auth', 'checkPeriod'])->name('marksheet');

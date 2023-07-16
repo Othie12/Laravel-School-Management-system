@@ -44,6 +44,11 @@ class Students extends Model
         return Period::where('date_to', '>=', $this->created_at)->get();
     }
 
+    public function attendance()
+    {
+        return $this->hasMany(Attendance::class, 'student_id');
+    }
+
     public function already_promoted()
     {
         if ($this->last_promoted) {

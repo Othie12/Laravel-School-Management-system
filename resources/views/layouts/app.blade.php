@@ -44,6 +44,7 @@
                         @if (Auth::user()->class)
                             <a class="dropdown-item" href="{{ route('grading') }}">Aggregation</a>
                             <a class="dropdown-item" href="{{ route('comments')}}">Commenting</a>
+                            <a class="dropdown-item" href="{{ route('attendance.create', ['class_id' => Auth::user()->class->id])}}">Attendance</a>
                         @endif
                         @if (in_array(Auth::user()->role, ['dos', 'secretary', 'head_teacher']))
                             <a class="dropdown-item" href="{{ route('period') }}">Set Year Calendar</a>

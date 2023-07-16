@@ -24,17 +24,17 @@
 @endif
 
 @if (in_array(Auth::user()->role, ['admini', 'head_teacher']))
-<div class="btn-group" align="left" style="position: sticky; top: 20%; z-index:1;">
-    <button class="btn btn-danger">Set School Fees</button>
-        <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
-        <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" style="z-index:1;">
-            @foreach ($classes as $class)
-                    <li><a href="{{ route('requirements.schoolfees', ['class_id' => $class->id])}}">{{ $class->name }}</a></li>
-            @endforeach
-        </ul>
-</div>
+    <div class="btn-group" align="left" style="position: sticky; top: 20%; z-index:1;">
+        <button class="btn btn-danger">Set School Fees</button>
+            <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" style="z-index:1;">
+                @foreach ($classes as $class)
+                        <li><a href="{{ route('requirements.schoolfees', ['class_id' => $class->id])}}">{{ $class->name }}</a></li>
+                @endforeach
+            </ul>
+    </div>
 @endif
 @include('welcome');
 @endsection

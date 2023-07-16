@@ -25,7 +25,6 @@ class ClassController extends Controller
      */
     public function create()
     {
-        //$teachers = User::all();
         return view('class.create-class', ['teachers' => User::all(), 'classes' => SchoolClass::all()]);
     }
 
