@@ -44,7 +44,9 @@
 <body class="">
 	<!-- Navbar -->
 	<nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="position: sticky; top: 0;">
-		<a class="navbar-brand unshow-on-small-screen" href="#">School Management System</a><!--
+		<a class="navbar-brand unshow-on-small-screen" href="#">School Management System
+            <button onclick="window.print()" class="dont-print btn btn-info">Print page</button>
+        </a><!--
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>-->
@@ -94,14 +96,17 @@
                             <a class="dropdown-item" href="{{ route('requirements.create') }}">Requirements</a>
 					</div>
 				</li>
-                <li class="nav-item"><button onclick="window.print()" class="dont-print btn btn-info">Print page</button></li>
 			<!--</ul>-->
 
 			<!--<ul class="navbar-nav ml-auto ">-->
                 <!--<li class="nav-item unshow-on-small-screen" style=""><span class="badge badge-info">{{ str_replace('-', '/', session('today')) }}</span></li>-->
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle unshow-on-small-screen" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						<img src="{{ asset('storage/' . Auth::user()->profile_pic_filepath) }}" alt="Profile Image" width="30" class="rounded-circle mr-2">
+                        @if (Auth::user()->profile_pic_filepath)
+						    <img src="{{ asset('storage/' . Auth::user()->profile_pic_filepath) }}" alt="Profile Image" width="30" class="rounded-circle mr-2">
+                        @else
+                            <x-application-logo :width="__('20px')"/>
+                        @endif
 					</a>
 					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
 						<a class="dropdown-item" href="{{ route('profile.edit') }}">My Profile</a>

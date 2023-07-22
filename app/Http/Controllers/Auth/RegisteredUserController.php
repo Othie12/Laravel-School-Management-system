@@ -62,7 +62,6 @@ class RegisteredUserController extends Controller
             }
         }
 
-
         if($request->has('classes'))
         {
             $classes = $request->input('classes', []);

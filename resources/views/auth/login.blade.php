@@ -6,6 +6,7 @@
 
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
+    <div align="center"><x-application-logo :width="__('100')"/></div>
 
     <form method="POST" action="{{ route('login') }}" >
         @csrf

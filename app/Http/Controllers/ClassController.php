@@ -25,7 +25,7 @@ class ClassController extends Controller
      */
     public function create()
     {
-        return view('class.create-class', ['teachers' => User::all(), 'classes' => SchoolClass::all()]);
+        return view('class.create-class', ['teachers' => User::where('role', '!=', 'parent')->get(), 'classes' => SchoolClass::all()]);
     }
 
     /**
@@ -57,7 +57,7 @@ class ClassController extends Controller
     public function edit(string $id)
     {
         $class = SchoolClass::find($id);
-      return view('class.update-class', ['clas' => $class, 'teachers' => User::all()]);
+      return view('class.update-class', ['clas' => $class, 'teachers' => User::where('role', '!=', 'parent')->get()]);
     }
 
     /**

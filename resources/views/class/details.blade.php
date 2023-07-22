@@ -29,7 +29,7 @@
                             <?php $mark = $subject->marks()->where('student_id', $student->id)->where('type', 'end')->orderBy('created_at', 'desc')->first() ?>
                                 <th class="{{ $mark ? '' : 'text-danger' }}"> {{  $mark ? $mark->mark  : 'Not set' }}  </th>
                             @endforeach
-                            @if (Auth::user()->class !== null)
+                            @if (Auth::user()->class === $student->class)
                                 <td>
                                     <form action="{{ $student->already_promoted() ? route('student.demote', ['id' => $student->id]) : route('student.promote', ['id' => $student->id]) }}" method="post">
                                         @csrf
@@ -51,10 +51,10 @@
                 @foreach ($class->students as $student)
                 <div class="col-sm-6 col-md-3">
                     <div class="thumbnail col-12 col-md">
-                    @if ($student->value('profile_pic_filepath'))
+                    @if ($student->profile_pic_filepath)
                         <img src="{{ asset('storage/' . $student->profile_pic_filepath) }}" alt="Profile Image" width="100%" height="100%" class="rounded-md mr-2" style="border-radius: 5%">
                     @else
-                        <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
+                        <x-application-logo class="w-20 h-20 fill-current text-gray-500" :width="__('100%')" />
                     @endif
                     </div>
                     <div class="caption">

@@ -105,7 +105,7 @@
         @if ($teacher->value('profile_pic_filepath'))
             <img src="{{ asset('storage/' . $teacher->value('profile_pic_filepath')) }}" alt="Profile Image" width="100" class="rounded-md mr-2" style="border-radius: 5%">
         @else
-            <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
+            <x-application-logo :width="__('100%')" />
         @endif
 </div>
         <div class="caption">

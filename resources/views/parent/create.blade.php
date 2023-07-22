@@ -44,7 +44,7 @@
                     <x-text-input id="picture" type="file" name="picture" />
                 </div>
 
-                <div>
+                <div class="mt-4">
                     <x-primary-button class="ml-4">
                         {{ __('Register') }}
                     </x-primary-button>
@@ -53,7 +53,7 @@
         </div>
 
         <div class="col-sm-6 col-md-6">
-            <h2>retgistered Parents</h2>
+            <h2 class="font-bold">retgistered Parents</h2>
             <div class="row">
             @foreach ($parents as $parent)
             <div class="col-sm-6 col-md-3">
@@ -61,17 +61,17 @@
                 @if ($parent->profile_pic_filepath)
                     <img src="{{ asset('storage/' . $parent->profile_pic_filepath) }}" alt="Profile Image" width="100%" class="rounded-md mr-2" style="border-radius: 5%">
                 @else
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500"/>
+                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" :width="__('100%')" />
                 @endif
             </div>
                 <div class="caption">
-                <h3> {{ $parent->name }} </h3>
+                    <h3> {{ $parent->name }} </h3>
                 <p>
                     <a href="profile-other?user_id={{ $parent->id }}" class="btn btn-primary" role="button">
-                    Edit
+                        Edit
                     </a>
                     <a href="#" class="btn btn-default" role="button">
-                    View
+                        View
                     </a>
                 </p>
                 </div>
