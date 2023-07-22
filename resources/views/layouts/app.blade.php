@@ -6,22 +6,49 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
     <style>
+
+        nav {
+            position: sticky
+            top: 0;
+            z-index: 1;
+        }
+
         @media print {
           .dont-print {
             display: none;
           }
         }
-      </style>
+
+        /* Customize the font size of the navbar links on smaller screens */
+        @media (max-width: 767px) {
+            nav {
+                display: flex;
+                flex-direction: row;
+            }
+            .navbar-nav .nav-link {
+            font-size: 14px;
+            margin: 10px;
+            }
+            .navbar-nav {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            .unshow-on-small-screen {
+                visibility: hidde;
+            }
+        }
+</style>
 
 </head>
-<body class="dark:bg-gray-700">
+<body class="">
 	<!-- Navbar -->
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="z-index:1;" >
-		<a class="navbar-brand" href="#">School Management System</a><!--
+	<nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="position: sticky; top: 0;">
+		<a class="navbar-brand unshow-on-small-screen" href="#">School Management System</a><!--
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>-->
-		<div class="collaps navbar-collapse" id="navbarNav">
+		<!--<div class="collape navbar-collae" id="navbarNav">-->
 			<ul class="navbar-nav">
 				<li class="nav-item active">
 					<a class="nav-link" href="{{route('dashboard')}}">Home</a>
@@ -70,12 +97,11 @@
                 <li class="nav-item"><button onclick="window.print()" class="dont-print btn btn-info">Print page</button></li>
 			</ul>
 
-			<ul class="navbar-nav ml-auto">
-                <li class="nav-item" style=""><span class="badge badge-info">{{ str_replace('-', '/', session('today')) }}</span></li>
-                <li class="nav-item"><img src="{{ asset('storage/' . Auth::user()->profile_pic_filepath) }}" alt="Profile Image" width="30" class="rounded-circle mr-2"></li>
+			<ul class="navbar-nav ml-auto ">
+                <!--<li class="nav-item unshow-on-small-screen" style=""><span class="badge badge-info">{{ str_replace('-', '/', session('today')) }}</span></li>-->
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						{{ Auth::user()->name }}
+					<a class="nav-link dropdown-toggle unshow-on-small-screen" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<img src="{{ asset('storage/' . Auth::user()->profile_pic_filepath) }}" alt="Profile Image" width="30" class="rounded-circle mr-2">
 					</a>
 					<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
 						<a class="dropdown-item" href="{{ route('profile.edit') }}">My Profile</a>
@@ -86,7 +112,7 @@
 					</div>
 				</li>
 			</ul>
-		</div>
+
 	</nav>
 
 	<!-- Page Content -->
