@@ -49,7 +49,7 @@
 			<span class="navbar-toggler-icon"></span>
 		</button>-->
 		<!--<div class="collape navbar-collae" id="navbarNav">-->
-			<ul class="navbar-nav">
+			<ul class="navbar-nav ml-auto">
 				<li class="nav-item active">
 					<a class="nav-link" href="{{route('dashboard')}}">Home</a>
 				</li>
@@ -95,9 +95,9 @@
 					</div>
 				</li>
                 <li class="nav-item"><button onclick="window.print()" class="dont-print btn btn-info">Print page</button></li>
-			</ul>
+			<!--</ul>-->
 
-			<ul class="navbar-nav ml-auto ">
+			<!--<ul class="navbar-nav ml-auto ">-->
                 <!--<li class="nav-item unshow-on-small-screen" style=""><span class="badge badge-info">{{ str_replace('-', '/', session('today')) }}</span></li>-->
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle unshow-on-small-screen" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
