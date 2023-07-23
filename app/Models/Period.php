@@ -12,8 +12,13 @@ class Period extends Model
     protected $table = 'period';
 
     protected $fillable = [
-        'name', 
+        'name',
         'date_from',
         'date_to',
     ];
+
+    public function nxt(): Period
+    {
+        return $this->name === 'Third term' ? Period::where('name', 'First term')->first() : Period::where('id', '>', $this->id)->first();
+    }
 }

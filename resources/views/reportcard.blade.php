@@ -79,7 +79,7 @@
 
             <table class="table">
                 <tr>
-                    <th>Next term begins on: <u>23 / 02 / 2023</u></th>
+                    <th>Next term begins on: <u>{{ str_replace('-', ' / ', $period->nxt()->date_from) }} </u></th>
                     <th>SchoolFees: <span style="color:red">Shs.{{ $student->class->requirements->where('name', 'schoolfees')->where('period_id', $period->id)->first() ? $student->class->requirements->where('name', 'schoolfees')->where('period_id', $period->id)->first()->price : 'Not set' }}</span></th>
                 </tr>
             </table>
