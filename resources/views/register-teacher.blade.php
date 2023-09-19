@@ -103,7 +103,7 @@
     <div class="col-sm-6 col-md-3">
         <div class="thumbnail">
         @if ($teacher->value('profile_pic_filepath'))
-            <img src="{{ asset('storage/' . $teacher->value('profile_pic_filepath')) }}" alt="Profile Image" width="100" class="rounded-md mr-2" style="border-radius: 5%">
+            <img src="{{ asset('storage/' . $teacher->value('profile_pic_filepath')) }}" alt="Profile Image" class="rounded-md mr-2 w-full aspect-square">
         @else
             <x-application-logo :width="__('100%')" />
         @endif

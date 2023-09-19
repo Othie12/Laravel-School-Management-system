@@ -49,10 +49,10 @@
             <div class="tab-pane active" id="tab2">
                 <div class="row">
                 @foreach ($class->students as $student)
-                <div class="col-sm-6 col-md-3">
-                    <div class="thumbnail col-12 col-md">
+                <div class="col-sm-6 col-md-3 h-px">
+                    <div class="thumbnail h-50 object-contain col-12 col-md">
                     @if ($student->profile_pic_filepath)
-                        <img src="{{ asset('storage/' . $student->profile_pic_filepath) }}" alt="Profile Image" width="100%" height="100%" class="rounded-md mr-2" style="border-radius: 5%">
+                        <img src="{{ asset('storage/' . $student->profile_pic_filepath) }}" alt="Profile Image" class="rounded-md mr-2 w-full">
                     @else
                         <x-application-logo class="w-20 h-20 fill-current text-gray-500" :width="__('100%')" />
                     @endif

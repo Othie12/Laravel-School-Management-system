@@ -40,8 +40,8 @@
                 <?php
                     $markMid = $subject->marks->where('student_id', $student->id)->where('period_id', $period->id)->where('type', 'mid')->first();
                     $markEnd = $subject->marks->where('student_id', $student->id)->where('period_id', $period->id)->where('type', 'end')->first();
-                    $gradeMid = $markMid->grading() ? $markMid->grading()->grade : 9;
-                    $gradeEnd = $markEnd->grading() ? $markEnd->grading()->grade : 9;
+                    $gradeMid = $markMid !== null ? $markMid->grading()->grade : 9;
+                    $gradeEnd = $markEnd !== null ? $markEnd->grading()->grade : 9;
                     $agg = ($gradeMid + $gradeEnd) / 2;
                     $mm = $markMid ? $markMid->mark : 0;
                     $me = $markEnd ? $markEnd->mark : 0;
@@ -52,7 +52,7 @@
                 <tr>
                     <th>{{ $subject->name }}</th>
                     <td>{{ $agg }}</td>
-                    <td>{{ $markEnd->grading() ? $markEnd->grading()->remark : 'N/A'}}</td>
+                    <td>{{ $markEnd !== null ? $markEnd->grading()->remark : 'N/A'}}</td>
                     <td>{{ $subject->teachers->first()->name ? $subject->teachers->first()->name : 'N/A'}} </td>
                     <td>{{ $mark  }}</td>
                     <?php $totalAgg += $agg  ?>
