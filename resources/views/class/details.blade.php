@@ -5,7 +5,7 @@
 <x-guest-layout>
 
     <div class="tabbable tabs-left">
-        <ul class="nav nav-tabs" style="display: flex; justify-content: space-between">
+        <ul class="nav nav-tabs flex justify-between">
             <li><a href="#tab1" data-toggle="tab"><button type="button" class="btn btn-primary" style="background-color: deepskyblue"> Marksheet </button></a></li>
             <li><a href="#tab2" data-toggle="tab"><button type="button" class="btn btn-primary active" style="background-color: deepskyblue"> Students </button></a></li>
             <li><a href="#tab3" data-toggle="tab"><button type="button" class="btn btn-primary" style="background-color: deepskyblue"> Requirements </button></a></li>

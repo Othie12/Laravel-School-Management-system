@@ -33,8 +33,9 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $today = Carbon::now();
-        $period = Period::whereDate('date_from', '<=', $today)->whereDate('date_to', '>=', $today)->first();
-        $request->session()->put('period_id', $period->id);
+        if($period = Period::whereDate('date_from', '<=', $today)->whereDate('date_to', '>=', $today)->first()){
+            $request->session()->put('period_id', $period->id);
+        }
         $request->session()->put('today', $today);
 
         return redirect()->intended(RouteServiceProvider::HOME);

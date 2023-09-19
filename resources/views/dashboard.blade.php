@@ -3,7 +3,9 @@
 
 <div class="jumbotron" align="center">
     <h1>Hello {{Auth::user()->sex === 'm'? 'Sir.' : 'Madam.'}}</h1>
-    <h2 class="text-info">{{ $period->name}} <br><span class="badge badge-info">{{ str_replace('-', '/', $period->date_from) }} to {{ str_replace('-', '/', $period->date_to) }}</span></h2>
+    @if ($period != null)
+        <h2 class="text-info">{{ $period->name}} <br><span class="badge badge-info">{{ str_replace('-', '/', $period->date_from) }} to {{ str_replace('-', '/', $period->date_to) }}</span></h2>
+    @endif
     <x-auth-session-status class="mb-4" :status="session('status')  " />
 </div>
 
