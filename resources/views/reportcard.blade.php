@@ -7,7 +7,7 @@
         <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
     </div>
     <div class="col-xs-8 col-8 col-sm-8 col-md-8 col-lg-8" align='center'>
-        <h1>ABCD NUR &amp PRI SCHOOL</h1>
+        <h1>SEETA C.O.U PRIMARY SCHOOL</h1>
         <p>Seeta, Mukono Uganda<br>Tel: 0703892783, 0755473844 <br> <b>TERMINAL REPORT</b> </p>
     </div>
     <div class="col-xs-2 col-2 col-sm-2 col-md-2 col-lg-2">
@@ -51,10 +51,10 @@
                 ?>
                 <tr>
                     <th>{{ $subject->name }}</th>
-                    <td>{{ $agg }}</td>
+                    <td>{{ (int)$agg }}</td>
                     <td>{{ $markEnd !== null ? $markEnd->grading()->remark : 'N/A'}}</td>
                     <td>{{ $subject->teachers->first()->name ? $subject->teachers->first()->name : 'N/A'}} </td>
-                    <td>{{ $mark  }}</td>
+                    <td>{{ (int)$mark  }}</td>
                     <?php $totalAgg += $agg  ?>
                 </tr>
             @endforeach

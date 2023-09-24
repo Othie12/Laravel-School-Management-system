@@ -1,57 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>School management system</title>
-	<!-- Include Bootstrap CSS -->
+	<title>Seeta C.o.U Primary School</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
     <style>
-
-        nav {
-            position: sticky
-            top: 0;
-            z-index: 1;
-        }
 
         @media print {
           .dont-print {
             display: none;
           }
         }
-
-        /* Customize the font size of the navbar links on smaller screens */
-        @media (max-width: 767px) {
-            nav {
-                display: flex;
-                flex-direction: row;
-            }
-            .navbar-nav .nav-link {
-            font-size: 14px;
-            margin: 10px;
-            }
-            .navbar-nav {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-            }
-            .unshow-on-small-screen {
-                visibility: hidde;
-            }
-        }
-</style>
+    </style>
 
 </head>
 <body class="">
-	<!-- Navbar -->
-	<nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="position: sticky; top: 0;">
-		<a class="navbar-brand unshow-on-small-screen" href="#">School Management System
+	<nav class="navbar navbar-expand-lg bg-gray-300 z-50 backdrop-blur">
+		<a class="navbar-brand" href="#">Seeta C.o.U Primary School
             <button onclick="window.print()" class="dont-print btn btn-info">Print page</button>
         </a><!--
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>-->
 		<!--<div class="collape navbar-collae" id="navbarNav">-->
-			<ul class="navbar-nav ml-auto">
+			<ul class="navbar-nav m-auto flex-row justify-between">
 				<li class="nav-item active">
 					<a class="nav-link" href="{{route('dashboard')}}">Home</a>
 				</li>
