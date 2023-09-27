@@ -1,13 +1,13 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="/public/storage/logos/Asset 8.png" width="400" alt="App logo"></a></p>
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="public/storage/logos/Asset 8.png" width="400" alt="App logo"></a></p>
 
 
-# School Management System
+# School Management System(SMS)
 ## About
 
 This is a school management system that could enable schools to automate the processes that are involved in the daily running of primary and secondary Schools in Uganda. These could involve
 
 - Tracking School calendar dates mostly begining and end dates of school terms
-- Atomation of the processes involved in making report cards. This can most of the times be tiresome and erraneous for schools with too many Students
+- Automation of the processes involved in making report cards. This can most of the times be tiresome and erraneous for schools with too many Students
 - Recording of attendances without the need of bulky registers. This data is stored on the cloud and it can be retrieved any time
 - Enabling parents to track their child's performance, attendance and more
 - Giving all stakeholders first hand informantion of what goes on in school
