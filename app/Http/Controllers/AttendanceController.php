@@ -9,25 +9,16 @@ use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
-    /**
-     * Display a listing attended students
-     */
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(string $class_id)
     {
         return view('attendance.create', ['class' => SchoolClass::find($class_id), 'tday' => Carbon::now()->startOfDay()]);
     }
 
-    /**
-     * Record attended students today
-     */
     public function store(Request $request)
     {
         //first remove any student that's not checked this time.
@@ -50,12 +41,8 @@ class AttendanceController extends Controller
         return back()->with('status', 'Recorded succesfuly');
     }
 
-    /**
-     * Display the sstudents who attended on a certain day in a certain class
-     */
     public function show(string $id, string $class_id)
     {
         //
     }
-
 }

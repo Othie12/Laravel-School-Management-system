@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('profile_pic_filepath')->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->unsignedBigInteger('class_id');
-            $table->foreign('parent_id')->references('id')->on('parents');
+            $table->foreign('parent_id')->references('id')->on('parents')->onDelete('set null');
             $table->foreign('class_id')->references('id')->on('class');
             $table->text('custom_ct_comm')->nullable();
             $table->text('custom_ht_comm')->nullable();

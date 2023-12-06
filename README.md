@@ -1,4 +1,4 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="public/storage/logos/Asset 8.png" width="400" alt="App logo"></a></p>
+<p align="center"><a href="#about" target="_blank"><img src="public/storage/logos/Asset 8.png" width="400" alt="App logo"></a></p>
 
 
 # School Management System(SMS)
