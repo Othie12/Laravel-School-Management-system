@@ -12,72 +12,52 @@ use App\Providers\RouteServiceProvider;
 
 class ClassController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
-        $classes = SchoolClass::all();
+        $classes = SchoolClass::with(['classTeacher', 'requirements'])->get();
+        return response()->json($classes, 200);
     }
 
-    /**
-     * Show the form for creating a new class.
-     */
-    public function create()
-    {
-        return view('class.create-class', ['teachers' => User::where('role', '!=', 'parent')->get(), 'classes' => SchoolClass::all()]);
+    public function getStudents(string $id){
+        $students = SchoolClass::find($id)->students()->get();
+        return response()->json($students, 200);
     }
 
-    /**
-     * Store a newly created class in storage.
-     */
+    public function getRequirements(string $id){
+        $requirements = SchoolClass::find($id)->requirements()->get();
+        return response()->json($requirements, 200);
+    }
+
     public function store(Request $request)
     {
-        //
         $schoolClass = SchoolClass::create([
             'name' => $request->name,
-            'classteacher_id' => $request->classteacher,
+            'classteacher_id' => $request->classteacher_id,
         ]);
-        return redirect()->back()->with('status', 'Class info saved successfully.');
-
+        return response()->json($schoolClass, 200);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        $schoolClass = SchoolClass::find($id);
+        $schoolClass = SchoolClass::with(['classTeacher', 'subjects', 'gradings', 'requirements', 'students'])->find($id);
+        return response()->json($schoolClass, 200);
         return view('class.details', ['class' => $schoolClass, 'periods' => Period::all()]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        $class = SchoolClass::find($id);
-      return view('class.update-class', ['clas' => $class, 'teachers' => User::where('role', '!=', 'parent')->get()]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $schoolClass = SchoolClass::find($id);
         $schoolClass->name = $request->name;
-        $schoolClass->classteacher_id = $request->classteacher;
+        $schoolClass->classteacher_id = $request->classteacher_id;
         $schoolClass->save();
 
-        return redirect()->back()->with('status', 'Updated successfuly');
+        return response()->json($schoolClass, 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         SchoolClass::destroy([$id]);
+        return response()->json(['updated succesfully'], 200);
     }
 }

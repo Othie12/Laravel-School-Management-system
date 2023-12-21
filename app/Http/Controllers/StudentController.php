@@ -15,27 +15,18 @@ use Carbon\Carbon;
 
 class StudentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index($classId)
     {
         $class = SchoolClass::find($classId);
         return view('student.showall',[ 'students' => $class->Students]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
         return view('student.create', ['classes' => SchoolClass::all(), 'parents' => User::where('role', 'parent')->get()]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         //create a new student record in the database
@@ -67,26 +58,17 @@ class StudentController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         return view('student.show', ['student' => Students::find($id)]);
     }
 
-    /**
-     * Show the form for editing the specified student.
-     */
     public function edit(Request $request)
     {
         $id = $request->id;
         return view('student.update', ['student' => Students::find($id), 'classes' => SchoolClass::all(),  'parents' => User::where('role', 'parent')->get()]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request)
     {
         $id = $request->id;
@@ -104,29 +86,28 @@ class StudentController extends Controller
 
     public function updatePhoto(Request $request)
     {
-         // Get the student
-    $student = Students::find($request->id);
+        // Get the student
+        $student = Students::find($request->id);
 
-    // Retrieve the student's current profile photo directory from the database
-    $currentPhotoDirectory = $student->profile_pic_filepath;
+        // Retrieve the student's current profile photo directory from the database
+        $currentPhotoDirectory = $student->profile_pic_filepath;
 
-    // Delete the current photo from the filesystem
-    if ($currentPhotoDirectory) {
-        Storage::delete($currentPhotoDirectory);
+        // Delete the current photo from the filesystem
+        if ($currentPhotoDirectory) {
+            Storage::delete($currentPhotoDirectory);
+        }
+
+        // Upload the new photo
+        $newPhotoPath = $request->file('picture')->store('profile_pictures', 'public');
+
+        // Update the student's profile photo with the new photo
+        $student->profile_pic_filepath = $newPhotoPath;
+        $student->save();
+
+        return redirect()->back()->with('status', 'Profile photo updated successfully!');
     }
 
-    // Upload the new photo
-    $newPhotoPath = $request->file('picture')->store('profile_pictures', 'public');
 
-    // Update the student's profile photo with the new photo
-    $student->profile_pic_filepath = $newPhotoPath;
-    $student->save();
-
-    return redirect()->back()->with('status', 'Profile photo updated successfully!');
-    }
-    /**
-     * Get the desired parent from the database
-     */
     public function searchParent(Request $request){
         $searchterm = $request->term;
         $parents = User::where('name', 'like', "%$searchterm%")->where('role', 'parent')->get();
@@ -159,9 +140,8 @@ class StudentController extends Controller
             return redirect()->back()->with('status', 'Demoted succesfuly');
         }
     }
-    /**
-     * Remove the specified resource from storage.
-     */
+
+
     public function destroy(Request $request)
     {
         $id = $request->id;
@@ -173,6 +153,10 @@ class StudentController extends Controller
         $student = Students::find($id);
         $student->delete();
         return Redirect::to(route('dashboard'));
+    }
 
+    public function markData(string $id){
+        $data = Students::find($id)->markData();
+        return response()->json($data, 200);
     }
 }
