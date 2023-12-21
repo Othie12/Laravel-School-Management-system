@@ -47,4 +47,18 @@ class SchoolClass extends Model
     {
         return $this->hasMany(Comments::class, 'class_id');
     }
+
+    public function fees(){
+        return $this->requirements->where('name', 'schoolfees')->get();
+    }
+
+    public function girls(): int {
+        return $this->students->where('sex', 'f')->count();
+    }
+
+    public function boys(): int{
+        return $this->requirements->where('sex', 'm')->count();
+    }
+
+
 }
