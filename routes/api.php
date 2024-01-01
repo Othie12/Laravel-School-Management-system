@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -38,8 +39,20 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('/login', [AuthController::class, 'login']);
+
 Route::get('/classes', [ClassController::class, 'index']);
 Route::get('/class/students/{id}', [ClassController::class, 'getStudents']);
 Route::get('/class/requirements/{id}', [ClassController::class, 'getRequirements']);
+
+Route::get('/gradings/{classId}', [GradingController::class, 'index']);
+Route::post('/gradings/{classId}', [GradingController::class, 'store']);
+Route::patch('/gradings/{id}', [GradingController::class, 'update']);
+Route::delete('/gradings/{id}', [GradingController::class, 'destroy']);
+
+Route::get('/comments/{classId}', [CommentsController::class, 'index']);
+Route::post('/comments/{classId}', [CommentsController::class, 'store']);
+Route::patch('/comments/{id}', [CommentsController::class, 'update']);
+Route::delete('/comments/{id}', [CommentsController::class, 'destroy']);
 
 Route::get('/student/mark-data/{id}', [StudentController::class, 'markData']);

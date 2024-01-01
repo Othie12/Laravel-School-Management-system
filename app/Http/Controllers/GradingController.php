@@ -9,98 +9,40 @@ use Illuminate\Support\Facades\Auth;
 
 class GradingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+    public function index($classId){
+        $gradings = Grading::where('class_id', $classId)->get();
+        return response()->json($gradings, 200);
     }
 
-    public function resolve()
+    public function store(string $classId, Request $request)
     {
-        $schoolclass = SchoolClass::where('classteacher_id', Auth::user()->id)->first();
-        $gradings = Grading::where('class_id', $schoolclass->id)->get();
-        if (count($gradings) === 0) {
-            return $this->create();
-        }else{
-            return $this->edit($gradings);
-        }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('grading.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-        $schoolclass = SchoolClass::where('classteacher_id', Auth::user()->id)->first();
-        $marks_from = array(0, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95);
-        $marks_to = array(24, 29, 34, 39, 44, 49, 54, 59, 64, 69, 74, 79, 84, 89, 94, 100);
-        $agg = $request->agg;
-        $remarks = $request->remark;
-
-        for ($i=0; $i < count($agg); $i++) {
             $stored = Grading::create([
-                'class_id' => $schoolclass->id,
-                'marks_from' => $marks_from[$i],
-                'marks_to' => $marks_to[$i],
-                'grade' => $agg[$i],
-                'remark' => $remarks[$i],
+                'class_id' => $classId,
+                'marks_from' => $request->marks_from,
+                'marks_to' => $request->marks_to,
+                'grade' => $request->grade,
+                'remark' => $request->remark,
             ]);
-        }
-        return redirect(route('grading'))->with('status', 'created Succesfully');
+            return response()->json($stored, 200);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(Request $request, string $id)
     {
-        //
+        $grading = Grading::find($id);
+
+        $grading->marks_from = $request->marks_from;
+        $grading->marks_to = $request->marks_to;
+        $grading->grade = $request->grade;
+        $grading->remark = $request->remark;
+        $grading->save();
+
+        return response()->json($grading, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($gradings)
-    {
-        return view('grading.update', ['gradings' => $gradings]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request)
-    {
-        //first get the class to which this teacher is the classteacher
-        $schoolclass = SchoolClass::where('classteacher_id', Auth::user()->id)->first();
-        $gradings = Grading::where('class_id', $schoolclass->id)->get();
-        $agg = $request->agg;
-        $remarks = $request->remark;
-
-        for ($i=0; $i < count($agg); $i++) {
-            $gradings[$i]->grade = $agg[$i];
-            $gradings[$i]->remark = $remarks[$i];
-            $gradings[$i]->save();
-        }
-        return redirect(route('grading'))->with('status', 'updated Succesfully');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        Grading::destroy($id);
+        return response()->json(['message' => 'deleted succesfuly'], 200);
     }
 
     public function buildGrade($grade){
