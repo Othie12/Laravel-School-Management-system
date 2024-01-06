@@ -16,50 +16,47 @@ use Carbon\Carbon;
 class StudentController extends Controller
 {
 
-    public function index($classId)
+    public function index(string $limit, string $offset)
     {
-        $class = SchoolClass::find($classId);
-        return view('student.showall',[ 'students' => $class->Students]);
-    }
-
-    public function create()
-    {
-        return view('student.create', ['classes' => SchoolClass::all(), 'parents' => User::where('role', 'parent')->get()]);
+        $students = Students::limit($limit)->offset($offset)->orderBy('name')->get();
+        return response()->json($students, 200);
     }
 
     public function store(Request $request)
     {
-        //create a new student record in the database
         $student = Students::create([
             'name' => $request->name,
             'sex' => $request->sex,
             'dob' => $request->dob,
-            'class_id' => $request->class,
+            'class_id' => $request->class_id,
         ]);
 
         //if the parent id has been provided, save it to the database
-        if(!empty($request->parent)){
-            $student->parent_id = $request->parent;
+        if($student && !empty($request->parent_id)){
+            $student->parent_id = $request->parent_id;
             $student->save();
         }
 
 
         //first check if the student's picture has been provided
-        if ($request->hasFile('picture')) {
+        if ($student && $request->hasFile('profile_pic_filepath')) {
             //store the profilepicture into the profile_picures dir in public and return the name and path
-            $profilePicturePath = $request->file('picture')->store('profile_pictures', 'public');
+            $profilePicturePath = $request->file('profile_pic_filepath')->store('profile_pictures', 'public');
 
             // Save the profile picture file path to the database
             $student->profile_pic_filepath = $profilePicturePath;
             $student->save();
         }
 
-        return redirect()->back()->with('status', 'Student saved successfully.');
-
+        if($student){
+            return response()->json($student, 200);
+        }
+        return response()->json(['error' => 'Failed to save student'], 401);
     }
 
     public function show(string $id)
     {
+
         return view('student.show', ['student' => Students::find($id)]);
     }
 

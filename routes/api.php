@@ -55,4 +55,16 @@ Route::post('/comments/{classId}', [CommentsController::class, 'store']);
 Route::patch('/comments/{id}', [CommentsController::class, 'update']);
 Route::delete('/comments/{id}', [CommentsController::class, 'destroy']);
 
+Route::get('/attendance/{classId}', [AttendanceController::class, 'index']);
+Route::post('/attendance/{classId}', [AttendanceController::class, 'store']);
+Route::patch('/attendance/{id}', [AttendanceController::class, 'update']);
+Route::delete('/attendance/{id}', [AttendanceController::class, 'destroy']);
+
+Route::get('/period/{name}', [PeriodController::class, 'show']);
+Route::post('/period', [PeriodController::class, 'store']);
+
 Route::get('/student/mark-data/{id}', [StudentController::class, 'markData']);
+Route::post('/student/create', [StudentController::class, 'store']);
+Route::post('/student/search/{term}', [StudentController::class, 'search']);
+Route::post('/student/find/{id}', [StudentController::class, 'show']);
+Route::post('/student/index/{limit}/{offset}', [StudentController::class, 'index']);
