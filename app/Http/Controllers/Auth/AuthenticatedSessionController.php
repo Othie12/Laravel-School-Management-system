@@ -26,7 +26,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request)
     {
         $request->authenticate();
 
@@ -38,7 +38,8 @@ class AuthenticatedSessionController extends Controller
         }
         $request->session()->put('today', $today);
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return response()->json('success', 200);
+        //return redirect()->intended(RouteServiceProvider::HOME);
     }
 
     /**

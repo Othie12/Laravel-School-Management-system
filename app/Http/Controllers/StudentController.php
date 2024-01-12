@@ -39,9 +39,9 @@ class StudentController extends Controller
 
 
         //first check if the student's picture has been provided
-        if ($student && $request->hasFile('profile_pic_filepath')) {
+        if ($student && $request->hasFile('picture')) {
             //store the profilepicture into the profile_picures dir in public and return the name and path
-            $profilePicturePath = $request->file('profile_pic_filepath')->store('profile_pictures', 'public');
+            $profilePicturePath = $request->file('picture')->store('profile_pictures', 'public');
 
             // Save the profile picture file path to the database
             $student->profile_pic_filepath = $profilePicturePath;
@@ -49,21 +49,15 @@ class StudentController extends Controller
         }
 
         if($student){
-            return response()->json($student, 200);
+            return response()->json('Saved successfuly', 200);
         }
-        return response()->json(['error' => 'Failed to save student'], 401);
+        return response()->json('Failed to save student', 401);
     }
 
     public function show(string $id)
     {
-
-        return view('student.show', ['student' => Students::find($id)]);
-    }
-
-    public function edit(Request $request)
-    {
-        $id = $request->id;
-        return view('student.update', ['student' => Students::find($id), 'classes' => SchoolClass::all(),  'parents' => User::where('role', 'parent')->get()]);
+        $student = Students::find($id);
+        return $student ? response()->json($student, 200) : response()->json('Student not found', 401);
     }
 
     public function update(Request $request)
@@ -75,10 +69,11 @@ class StudentController extends Controller
         $student->dob = $request->dob;
         $student->parent_id = $request->parent;
         $student->class_id = $request->class_id;
-        $student->save();
 
-        return redirect()->back()->with('status', 'Student updated successfully');
-
+        if($student->save()){
+            return response()->json('Updated succesfuly', 200);
+        }
+        return response()->json('Failed to update Student', 401);
     }
 
     public function updatePhoto(Request $request)
@@ -152,8 +147,8 @@ class StudentController extends Controller
         return Redirect::to(route('dashboard'));
     }
 
-    public function markData(string $id){
-        $data = Students::find($id)->markData();
+    public function markData(Request $request, string $id){
+        $data = Students::find($id)->markData($request->period);
         return response()->json($data, 200);
     }
 }

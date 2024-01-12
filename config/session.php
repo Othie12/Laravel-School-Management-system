@@ -155,7 +155,9 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN'),
+    //'domain' => env('SESSION_DOMAIN'),
+    //'domain' => '.domain.com',
+    'domain' => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -168,7 +170,7 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    'secure' => env('SESSION_SECURE_COOKIE', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -181,7 +183,7 @@ return [
     |
     */
 
-    'http_only' => true,
+    'http_only' => false,
 
     /*
     |--------------------------------------------------------------------------

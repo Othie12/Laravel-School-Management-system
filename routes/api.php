@@ -12,7 +12,10 @@ use App\Http\Controllers\TodosController;
 use App\Http\Controllers\MarksController;
 use App\Http\Controllers\CommentsController;
 use App\Http\Controllers\RequirementController;
+use App\Http\Controllers\UsersController;
+use App\Http\Controllers\ApiUserController;
 use App\Http\Controllers\ParentController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Models\User;
 use App\Models\Period;
 use App\Models\Students;
@@ -24,22 +27,14 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login']);//->middleware('auth:sanctum');
+//Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+
 
 Route::get('/classes', [ClassController::class, 'index']);
 Route::get('/class/students/{id}', [ClassController::class, 'getStudents']);
@@ -64,7 +59,23 @@ Route::get('/period/{name}', [PeriodController::class, 'show']);
 Route::post('/period', [PeriodController::class, 'store']);
 
 Route::get('/student/mark-data/{id}', [StudentController::class, 'markData']);
-Route::post('/student/create', [StudentController::class, 'store']);
-Route::post('/student/search/{term}', [StudentController::class, 'search']);
-Route::post('/student/find/{id}', [StudentController::class, 'show']);
-Route::post('/student/index/{limit}/{offset}', [StudentController::class, 'index']);
+Route::post('/student', [StudentController::class, 'store']);
+Route::get('/student/search/{term}', [StudentController::class, 'search']);
+Route::get('/student/find/{id}', [StudentController::class, 'show']);
+Route::get('/student/index/{limit}/{offset}', [StudentController::class, 'index']);
+
+Route::get('/parent/search/{term}', [ParentController::class, 'search']);
+
+Route::post('/people', [ApiUserController::class, 'store']);
+
+Route::get('/subjects', [SubjectController::class, 'index']);
+Route::get('/subject/{id}', [SubjectController::class, 'show']);
+Route::post('/subject', [SubjectController::class, 'store']);
+Route::patch('/subject/{id}', [SubjectController::class, 'update']);
+
+Route::get('/requirements', [RequirementController::class, 'index']);
+Route::get('/requirement/{id}', [RequirementController::class, 'show']);
+Route::post('/requirement', [RequirementController::class, 'store']);
+Route::patch('/requirement/{id}', [RequirementController::class, 'update']);
+
+Route::get('/fees/{class_id}', [RequirementController::class, 'schoolFees']);

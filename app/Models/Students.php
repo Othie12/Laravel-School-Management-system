@@ -59,9 +59,9 @@ class Students extends Model
         return false;
     }
 
-    public function markData(){
+    public function markData(Period $period){
         $subData = [];
-        $period = Period::find(2);
+        //$period = Period::find(2);
         $totalAgg = 0;//Gonna use it to get the total aggregate mark in all subjects
         $totalMarks = 0;//Gonna use it to get the total marks in all subjects
         $count = 0;//gonna use it to get the total number of subjects which i'll later use to get the optimal overal mark
