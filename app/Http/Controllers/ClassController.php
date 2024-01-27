@@ -24,8 +24,8 @@ class ClassController extends Controller
         return response()->json($students, 200);
     }
 
-    public function getRequirements(string $id){
-        $requirements = SchoolClass::find($id)->requirements()->get();
+    public function getRequirements(Request $request, string $id){
+        $requirements = SchoolClass::find($id)->requirements()->where('period_id', $request->period->id)->get();
         return response()->json($requirements, 200);
     }
 

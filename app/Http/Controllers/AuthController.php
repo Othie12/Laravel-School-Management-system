@@ -17,16 +17,7 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials)) {
-
-//            $request->session()->regenerate();
-/*
-        $today = Carbon::now();
-        if($period = Period::whereDate('date_from', '<=', $today)->whereDate('date_to', '>=', $today)->first()){
-            $request->session()->put('period_id', $period->id);
-        }
-        $request->session()->put('today', $today);
-*/
-            return response()->json(Auth::user()->load(['classes', 'class']), 200);
+            return response()->json(Auth::user()->load(['classes', 'class', 'subjects']), 200);
         }
 
         return response()->json(['error' => 'Wrong contact or password'], 401);

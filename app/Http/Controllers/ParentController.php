@@ -64,9 +64,4 @@ class ParentController extends Controller
         }
         return response()->json(['error' => 'Failed to save parent'], 401);
     }
-
-    public function destroy(string $id)
-    {
-        //
-    }
 }

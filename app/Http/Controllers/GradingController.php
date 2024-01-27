@@ -23,7 +23,7 @@ class GradingController extends Controller
                 'grade' => $request->grade,
                 'remark' => $request->remark,
             ]);
-            return response()->json($stored, 200);
+                return $stored ? response()->json($stored, 200) : response()->json(['error' => 'Failed to store resource'], 500);
     }
 
     public function update(Request $request, string $id)

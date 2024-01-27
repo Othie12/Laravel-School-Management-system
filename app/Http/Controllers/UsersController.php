@@ -16,12 +16,14 @@ use Illuminate\Support\Facades\Storage;
 
 class UsersController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
         return view('auth.register', ['subjects' => Subject::all(), 'classes' => SchoolClass::all(), 'teachers' => User::where('role', '!=', 'parent')->get()]);
+    }
+
+    public function search(string $term){
+        $users = User::where('name', 'like', '%'.$term.'%')->limit('10')->get();
+        return response()->json($users, 200);
     }
 
     /**
@@ -86,5 +88,12 @@ class UsersController extends Controller
         //return redirect(RouteServiceProvider::HOME);
         return $user ? response()->json('Registered succesfuly', 200) : response()->json('Failed to regiter user', 401);
 
+    }
+
+
+    public function show(string $id)
+    {
+        $user = User::find($id)->load(['class', 'classes', 'subjects', 'children']);
+        return $user ? response()->json($user, 200) : response()->json('User not found', 401);
     }
 }

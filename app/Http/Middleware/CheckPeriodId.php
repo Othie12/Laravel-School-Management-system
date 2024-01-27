@@ -22,7 +22,7 @@ class CheckPeriodId
         }
         */
         if(!$request->has('period') || empty($request->get('period'))){
-            return response()->json('You can only access this page in the middle of the term', 401);
+            return response()->json(['error' =>'You can only access this page in the middle of the term'], 401);
         }
         return $next($request);
     }

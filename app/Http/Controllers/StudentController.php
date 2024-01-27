@@ -22,6 +22,11 @@ class StudentController extends Controller
         return response()->json($students, 200);
     }
 
+    public function search(string $term){
+        $students = Students::where('name', 'like', "%$term%")->limit(10)->get();
+        return response()->json($students, 200);
+    }
+
     public function store(Request $request)
     {
         $student = Students::create([
@@ -56,7 +61,7 @@ class StudentController extends Controller
 
     public function show(string $id)
     {
-        $student = Students::find($id);
+        $student = Students::find($id)->load(['class', 'parent']);
         return $student ? response()->json($student, 200) : response()->json('Student not found', 401);
     }
 
@@ -76,10 +81,10 @@ class StudentController extends Controller
         return response()->json('Failed to update Student', 401);
     }
 
-    public function updatePhoto(Request $request)
+    public function updatePhoto(Request $request, string $id)
     {
         // Get the student
-        $student = Students::find($request->id);
+        $student = Students::find($id);
 
         // Retrieve the student's current profile photo directory from the database
         $currentPhotoDirectory = $student->profile_pic_filepath;
@@ -95,8 +100,7 @@ class StudentController extends Controller
         // Update the student's profile photo with the new photo
         $student->profile_pic_filepath = $newPhotoPath;
         $student->save();
-
-        return redirect()->back()->with('status', 'Profile photo updated successfully!');
+        return response()->json(['success' => 'Profile photo updated succesfully'], 200);
     }
 
 
@@ -109,14 +113,17 @@ class StudentController extends Controller
     public function promote(Request $request, string $id){
         $student = Students::find($id);
         $year = Carbon::parse($student->last_promoted)->year;
-        if ($student->last_promoted && $year === Carbon::now()->year) {
-            return redirect()->back()->with('status', 'Cannot promote twice a year');
+        $currentYear = Carbon::now()->year;
+        if ($student->last_promoted && $year === $currentYear) {
+            return response()->json(['error' => 'Student can not be promoted twice a year'], 422);
+        }else if($student->class->next == null){
+            return response()->json(['error' => 'Candidates can not be promoted'], 422);
         }else{
-            $student = Students::find($id);
             $student->times_promoted++;
-            $student->last_promoted = Carbon::now();
+            $student->last_promoted = $currentYear;
+            $student->class_id = $student->class->next()->id;
             $student->save();
-            return redirect()->back()->with('status', 'Promoted succesfuly');
+            return response()->json(['success' => 'Promoted Succesfully'], 200);
         }
     }
 
@@ -124,12 +131,12 @@ class StudentController extends Controller
         $student = Students::find($id);
         $year = Carbon::parse($student->last_promoted)->year;
         if ($student->times_promoted <= 0 && $student->last_promoted && $year === Carbon::now()->subYear()->year) {
-            return redirect()->back()->with('status', 'Can only demote once a year');
+            return response()->json(['error' => 'Can not demote twice a year Succesfully'], 422);
         }else{
             $student->times_promoted--;
             $student->last_promoted = Carbon::now()->subYear();
             $student->save();
-            return redirect()->back()->with('status', 'Demoted succesfuly');
+            return response()->json(['success' => 'Demoted Succesfully'], 200);
         }
     }
 

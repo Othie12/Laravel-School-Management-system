@@ -16,7 +16,7 @@ class RequirementController extends Controller
 
     public function schoolFees(Request $request, $class_id)
     {
-        $item = Requirements::where('class_id', $class_id)->where('period_id', $request->session()->get('period_id'))->where('name', 'schoolfees')->first();
+        $item = Requirements::where('class_id', $class_id)->where('period_id', $request->period()->id)->where('name', 'schoolfees')->first();
         return response()->json($item, 200);
     }
 
@@ -25,11 +25,11 @@ class RequirementController extends Controller
      */
     public function store(Request $request)
     {
-        $req = Requirements::where('name', $request->name)->where('class_id', $request->class_id)->where('period_id', $request->session()->get('period_id'))->first();
+        $req = Requirements::where('name', $request->name)->where('class_id', $request->class_id)->where('period_id', $request->period()->id)->first();
         if ($req === null) {
             $requirement = Requirements::create([
                 'class_id' => $request->class_id,
-                'period_id' =>$period = $request->session()->get('period_id'),
+                'period_id' =>$period = $request->period()->id,
                 'name' => $request->name,
                 'quantity' => $request->quantity,
                 'price' => $request->has('price') ? $request->price : '',

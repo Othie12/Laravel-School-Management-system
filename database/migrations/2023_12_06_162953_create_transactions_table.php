@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('student_id');
             $table->decimal('amount', 15, 2)->nullable()->default(0.0);
             $table->decimal('balance', 15, 2)->nullable()->default(0.0);
-            $table->string('reason')->nullable();
+            $table->string('comment')->nullable();
             $table->string('payement_method')->nullable();
             $table->timestamps();
 
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('payments');
     }
 };

@@ -22,6 +22,7 @@ class Students extends Model
         'custom_ht_comm',
         'times_promoted',
         'last_promoted',
+        'balance'
     ];
 
     public function parent()
@@ -77,7 +78,9 @@ class Students extends Model
             $totalMarks += $mark;
             $count++;
 
-            array_push($subData, ['name' => $subject->name,
+            array_push($subData, ['name' => $subject->name, 'subjectId' =>  $subject->id,
+                        'markMidId' => $markMid ? $markMid->id : null,
+                        'markEndId' => $markEnd ? $markEnd->id : null,
                         'markMid' => $mm, 'aggMid' => $gradeMid, 'markEnd' => $me,
                         'aggEnd' => $gradeEnd, 'mark' => ceil($mark), 'agg' => $agg]
             );
@@ -85,4 +88,7 @@ class Students extends Model
         return $subData;
     }
 
+    public function payments(){
+        return $this->hasMany(Payment::class, 'student_id');
+    }
 }

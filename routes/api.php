@@ -37,6 +37,7 @@ Route::post('/login', [AuthController::class, 'login']);//->middleware('auth:san
 
 
 Route::get('/classes', [ClassController::class, 'index']);
+Route::get('/class/{id}', [ClassController::class, 'show']);
 Route::get('/class/students/{id}', [ClassController::class, 'getStudents']);
 Route::get('/class/requirements/{id}', [ClassController::class, 'getRequirements']);
 
@@ -61,10 +62,12 @@ Route::post('/period', [PeriodController::class, 'store']);
 Route::get('/student/mark-data/{id}', [StudentController::class, 'markData']);
 Route::post('/student', [StudentController::class, 'store']);
 Route::get('/student/search/{term}', [StudentController::class, 'search']);
-Route::get('/student/find/{id}', [StudentController::class, 'show']);
+Route::get('/student/{id}', [StudentController::class, 'show']);
 Route::get('/student/index/{limit}/{offset}', [StudentController::class, 'index']);
 
 Route::get('/parent/search/{term}', [ParentController::class, 'search']);
+Route::get('/user/search/{term}', [UsersController::class, 'search']);
+Route::get('/user/{id}', [UsersController::class, 'show']);
 
 Route::post('/people', [ApiUserController::class, 'store']);
 
@@ -79,3 +82,6 @@ Route::post('/requirement', [RequirementController::class, 'store']);
 Route::patch('/requirement/{id}', [RequirementController::class, 'update']);
 
 Route::get('/fees/{class_id}', [RequirementController::class, 'schoolFees']);
+
+Route::get('/specifiedMark/{student_id}/{subject_id}/{type}', [MarksController::class, 'specifiedMark']);
+Route::post('/record-mark', [MarksController::class, 'resolve2'])->middleware('checkPeriod');
