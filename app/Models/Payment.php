@@ -16,6 +16,7 @@ class Payment extends Model
 
     protected $fillable = [
         'student_id',
+        'period_id',
         'amount',
         'balance',
         'reason',
@@ -27,5 +28,13 @@ class Payment extends Model
 
     public function student() {
         return $this->belongsTo(Students::Class, 'student_id');
+    }
+
+    public function Period() {
+        return $this->belongsTo(Period::class, 'period_id');
+    }
+
+    public function getBalanceObjAttribute() {
+        return Balance::where('student_id', $this->student_id)->where('period_id', $this->period_id)->first();
     }
 }

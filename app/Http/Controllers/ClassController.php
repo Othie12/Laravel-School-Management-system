@@ -15,7 +15,7 @@ class ClassController extends Controller
 
     public function index()
     {
-        $classes = SchoolClass::with(['classTeacher', 'requirements'])->get();
+        $classes = SchoolClass::all()->load('classTeacher');
         return response()->json($classes, 200);
     }
 
@@ -48,8 +48,14 @@ class ClassController extends Controller
     public function update(Request $request, string $id)
     {
         $schoolClass = SchoolClass::find($id);
-        $schoolClass->name = $request->name;
-        $schoolClass->classteacher_id = $request->classteacher_id;
+
+        if($request->has('fees')){
+            $schoolClass->fees = $request->fees;
+        }
+
+        if($request->has('classteacher_id')){
+            $schoolClass->classteacher_id = $request->classteacher_id;
+        }
         $schoolClass->save();
 
         return response()->json($schoolClass, 200);

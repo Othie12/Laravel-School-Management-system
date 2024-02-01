@@ -11,6 +11,7 @@ class SchoolClass extends Model
 
     protected $table = 'class';
     protected $fillable = ['name', 'classteacher_id', 'fees'];
+    protected $appends = ['girls', 'boys'];
     protected $guarded = ['id'];
 
     public function classTeacher()
@@ -52,11 +53,12 @@ class SchoolClass extends Model
         return $this->requirements->where('name', 'schoolfees')->get();
     }
 
-    public function girlsCount(): int {
+    //this might slow down the loading page in the future
+    public function getGirlsAttribute() {
         return $this->students->where('sex', 'f')->count();
     }
 
-    public function boysCount(): int{
+    public function getBoysAttribute(){
         return $this->students->where('sex', 'm')->count();
     }
 

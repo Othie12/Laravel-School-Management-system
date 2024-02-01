@@ -14,13 +14,15 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id');
-            $table->decimal('amount', 15, 2)->nullable()->default(0.0);
-            $table->decimal('balance', 15, 2)->nullable()->default(0.0);
+            $table->foreignId('period_id');
+            $table->BigInteger('amount')->nullable()->default(0);
+            $table->BigInteger('balance')->nullable()->default(0);
             $table->string('comment')->nullable();
             $table->string('payement_method')->nullable();
             $table->timestamps();
 
             $table->foreign('student_id')->references('id')->on('students');
+            $table->foreign('period_id')->references('id')->on('period');
         });
     }
 

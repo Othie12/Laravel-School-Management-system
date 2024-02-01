@@ -26,6 +26,11 @@ class UsersController extends Controller
         return response()->json($users, 200);
     }
 
+    public function teachers(){
+        $teachers = User::where('role', '!=', 'parent')->doesntHave('class')->get();
+        return response()->json($teachers, 200);
+    }
+
     /**
      * Handle an incoming registration request.
      *

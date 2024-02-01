@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use App\Models\Students;
+use App\Models\Balance;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -29,24 +30,50 @@ class PaymentController extends Controller
     }
 
     public function store(Request $request, string $student_id){
-        $today = Carbon::now();
-        $student = Students::find($student_id);
-        if($student){
-            $stored = Payment::create([
-                'student_id' => $student_id,
-                'amount' => $request->amount,
-                'balance' => $student->balance - $request->amount,
-                'reason' => $request->reason,
-                'payement_method' => $request->payement_method,
-                'date_paid' => $request->date_paid,
-                'hash' => Hash::make($request->amount . $request->balance . $student_id . $today->toDateTimeString()),
-            ]);
-            if($stored){
-                $student->balance = $stored->balance;
-                $student->save();
+        $rules = [
+            'amount' => 'required|numeric|min:0',
+            'reason' => 'string|max:255',
+            'period_id' => 'required',
+            'payment_method' => 'string|max:255',
+            'date_paid' => 'date',
+        ];
+
+
+        try {
+            $this->validate($request, $rules);
+            $today = Carbon::now();
+            $student = Students::find($student_id);
+
+            $balanceObj = $student->balanceObjs->where('period_id', $request->period_id)->first();
+            if(!$balanceObj){
+                $balanceObj = Balance::create([
+                    'student_id' => $student_id,
+                    'period_id' => $request->period_id,
+                    'balance' => $student->class->fees,
+                ]);
             }
+
+            if($student){
+                $stored = Payment::create([
+                    'student_id' => $student_id,
+                    'amount' => $request->amount,
+                    'period_id' => $request->period_id,
+                    'balance' => $student->balance - $request->amount,
+                    'reason' => $request->reason,
+                    'payement_method' => $request->get('payement_method', 'Cash'),
+                    'date_paid' => $request->get('date_paid', Carbon::now()),
+                    'hash' => Hash::make($request->amount . $request->balance . $student_id . $today->toDateTimeString()),
+                ]);
+                if($stored){
+                    $balanceObj->balance -= $request->amount;
+                    $balanceObj->save();
+                    $student->save();
+                }
+            }
+            return $stored ? response()->json(['success' => 'Saved succesfuly'], 200) : response()->json(['error' => 'Failed to save succesfuly'], 500);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->errors()], 422);
         }
-        return $stored ? response()->json(['success' => 'Saved succesfuly'], 200) : response()->json(['error' => 'Failed to save succesfuly'], 500);
     }
 
     public function update(Request $request, string $id){
@@ -75,7 +102,8 @@ class PaymentController extends Controller
     }
 
     public function show(string $id){
-        $data = Payment::find($id)->load('student');
+        $data = Payment::find($id)->load(['student', 'period']);
+        $data->append('balance_obj');
         return $data ? response()->json($data, 200) : response()->json(['error' => 'Not found'], 404) ;
     }
 

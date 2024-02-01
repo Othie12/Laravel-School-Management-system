@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('students', function (Blueprint $table) {
-            $table->decimal('balance', 15, 2)->nullable()->default(0.0);
-            $table->string('schoolpay_code')->nullable();
+        Schema::create('balance', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('student_id');
+            $table->foreignId('period_id');
+            $table->bigInteger('balance')->nullable()->default(0);
+            $table->timestamps();
         });
     }
 
@@ -22,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('students', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('balance');
     }
 };

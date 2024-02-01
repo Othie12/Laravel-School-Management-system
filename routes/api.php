@@ -4,6 +4,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PeriodController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ClassController;
 use App\Http\Controllers\GradingController;
 use App\Http\Controllers\SubjectController;
@@ -40,6 +41,7 @@ Route::get('/classes', [ClassController::class, 'index']);
 Route::get('/class/{id}', [ClassController::class, 'show']);
 Route::get('/class/students/{id}', [ClassController::class, 'getStudents']);
 Route::get('/class/requirements/{id}', [ClassController::class, 'getRequirements']);
+Route::post('class/update/{id}', [ClassController::class, 'update']);
 
 Route::get('/gradings/{classId}', [GradingController::class, 'index']);
 Route::post('/gradings/{classId}', [GradingController::class, 'store']);
@@ -61,11 +63,13 @@ Route::post('/period', [PeriodController::class, 'store']);
 
 Route::get('/student/mark-data/{id}', [StudentController::class, 'markData']);
 Route::post('/student', [StudentController::class, 'store']);
+Route::patch('/student/{id}', [StudentController::class, 'update']);
 Route::get('/student/search/{term}', [StudentController::class, 'search']);
 Route::get('/student/{id}', [StudentController::class, 'show']);
 Route::get('/student/index/{limit}/{offset}', [StudentController::class, 'index']);
 
 Route::get('/parent/search/{term}', [ParentController::class, 'search']);
+Route::get('/teachers', [UsersController::class, 'teachers']);
 Route::get('/user/search/{term}', [UsersController::class, 'search']);
 Route::get('/user/{id}', [UsersController::class, 'show']);
 
@@ -81,7 +85,9 @@ Route::get('/requirement/{id}', [RequirementController::class, 'show']);
 Route::post('/requirement', [RequirementController::class, 'store']);
 Route::patch('/requirement/{id}', [RequirementController::class, 'update']);
 
-Route::get('/fees/{class_id}', [RequirementController::class, 'schoolFees']);
-
 Route::get('/specifiedMark/{student_id}/{subject_id}/{type}', [MarksController::class, 'specifiedMark']);
 Route::post('/record-mark', [MarksController::class, 'resolve2'])->middleware('checkPeriod');
+
+Route::get('/payment/{id}', [PaymentController::class, 'show']);
+Route::get('/payment/searc-hash/{hash}', [PaymentController::class, 'searchByHash']);
+Route::post('/payment/{student_id}', [PaymentController::class, 'store']);

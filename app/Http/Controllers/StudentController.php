@@ -29,11 +29,14 @@ class StudentController extends Controller
 
     public function store(Request $request)
     {
+        //We're going to initialize the student's balance with the class fees
+        $balance = SchoolClass::find($request->class_id)->fees;
         $student = Students::create([
             'name' => $request->name,
             'sex' => $request->sex,
             'dob' => $request->dob,
             'class_id' => $request->class_id,
+            'balance' => $balance,
         ]);
 
         //if the parent id has been provided, save it to the database
@@ -61,19 +64,32 @@ class StudentController extends Controller
 
     public function show(string $id)
     {
-        $student = Students::find($id)->load(['class', 'parent']);
+        $student = Students::find($id)->load(['class', 'parent', 'payments']);
+        $student->append(['balance']);
         return $student ? response()->json($student, 200) : response()->json('Student not found', 401);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, string $id)
     {
-        $id = $request->id;
         $student = Students::find($id);
-        $student->name = $request->name;
-        $student->sex = $request->sex;
-        $student->dob = $request->dob;
-        $student->parent_id = $request->parent;
-        $student->class_id = $request->class_id;
+        if($request->has('name')){
+            $student->name = $request->name;
+        }
+        if($request->has('sex')){
+            $student->sex = $request->sex;
+        }
+        if($request->has('dob')){
+            $student->dob = $request->dob;
+        }
+        if($request->has('parent_id')){
+            $student->parent_id = $request->parent;
+        }
+        if($request->has('class_id')){
+            $student->class_id = $request->class_id;
+        }
+        if($request->has('balance')){
+            $student->balance = $request->balance;
+        }
 
         if($student->save()){
             return response()->json('Updated succesfuly', 200);
