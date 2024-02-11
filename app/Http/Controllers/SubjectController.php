@@ -17,21 +17,10 @@ class SubjectController extends Controller
      */
     public function index()
     {
-        //
+        $subjects = Subject::all();
+        return response()->json($subjects, 200);
     }
 
-    /**
-     * Show the form for creating a new subject.
-     */
-    public function create()
-    {
-        //
-        return view('subject.create-subject', ['classes' => SchoolClass::all(), 'subjects' => Subject::all()]);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
 
@@ -39,60 +28,46 @@ class SubjectController extends Controller
             'name' => $request->name,
         ]);
 
-        $classes = $request->input('classes', []);
-        //$subject->classes()->attach($classes);
-        foreach($classes as $class){
-            $subjectClass = SubjectClass::create([
-                'subject_id' => $subject->id,
-                'class_id' => $class,
-            ]);
+        if($request->has('classes') && $subject)
+        {
+            $classes = $request->classes;
+            $classIds = [];
+            foreach($classes as $class){
+                array_push($classIds, $class['id']);
+            }
+            $subject->classes()->attach($classIds);
         }
 
-        return redirect()->back()->with('status', 'Subject saved successfully.');
+        return $subject ? response()->json('Registered succesfuly', 200) : response()->json('Failed to register', 401);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
+        $subject = Subject::find($id)->load('classes');
+        return $subject ? response()->json($subject, 200) : response()->json('Subject not found', 401);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-        return view('subject.edit', ['subject' => Subject::find($id), 'classes' => SchoolClass::all()]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
         $subject = Subject::find($id);
-        $subject->name = $request->name;
-        $subject->save();
+        if($subject){
+            $subject->name = $request->name;
+            $subject->save();
+        }
 
-        return redirect()->back()->with('status', 'Updated successfuly');
+        if($request->has('classes') && $subject)
+        {
+            $classes = $request->classes;
+            $classIds = [];
+            foreach($classes as $class){
+                array_push($classIds, $class['id']);
+            }
+            $subject->classes()->sync($classIds);
+        }
+
+        return $subject ? response()->json('Updated succesfuly', 200) : response()->json('Id not found', 401);
     }
 
-    public function updateClasses(Request $request, string $id)
-    {
-        $classes = $request->input('classes', []);
-        $subject = Subject::find($id);
-
-        $subject->classes()->sync($classes);
-        return redirect()->back()->with('status', 'ClassList-updated-succesfuly');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         //

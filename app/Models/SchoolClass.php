@@ -10,7 +10,8 @@ class SchoolClass extends Model
     use HasFactory;
 
     protected $table = 'class';
-    protected $fillable = ['name', 'classteacher_id'];
+    protected $fillable = ['name', 'classteacher_id', 'fees_day', 'fees_boarding'];
+    protected $appends = ['girls', 'boys'];
     protected $guarded = ['id'];
 
     public function classTeacher()
@@ -46,5 +47,90 @@ class SchoolClass extends Model
     public function comments()
     {
         return $this->hasMany(Comments::class, 'class_id');
+    }
+
+    public function schFees(){
+        return $this->requirements->where('name', 'schoolfees')->get();
+    }
+
+    //this might slow down the loading page in the future
+    public function getGirlsAttribute() {
+        return $this->students->where('sex', 'f')->count();
+    }
+
+    public function getBoysAttribute(){
+        return $this->students->where('sex', 'm')->count();
+    }
+
+    public function prev(): SchoolClass {
+        switch ($this->name) {
+            case 'MIDDLE':
+                return SchoolClass::where('name', 'BABY')->first();
+                break;
+            case 'TOP':
+                return SchoolClass::where('name', 'MIDDLE')->first();
+                break;
+            case 'P.1':
+                return SchoolClass::where('name', 'TOP')->first();
+                break;
+            case 'P.2':
+                return SchoolClass::where('name', 'P.1')->first();
+                break;
+            case 'P.3':
+                return SchoolClass::where('name', 'P.2')->first();
+                break;
+            case 'P.4':
+                return SchoolClass::where('name', 'P.3')->first();
+                break;
+            case 'P.5':
+                return SchoolClass::where('name', 'P.4')->first();
+                break;
+            case 'P.6':
+                return SchoolClass::where('name', 'P.5')->first();
+                break;
+            case 'P.7':
+                return SchoolClass::where('name', 'P.6')->first();
+                break;
+
+            default:
+                return null;
+                break;
+        }
+    }
+
+    public function next(): SchoolClass {
+        switch ($this->name) {
+            case 'BABY':
+                return SchoolClass::where('name', 'MIDDLE')->first();
+                break;
+            case 'MIDDLE':
+                return SchoolClass::where('name', 'TOP')->first();
+                break;
+            case 'TOP':
+                return SchoolClass::where('name', 'P.1')->first();
+                break;
+            case 'P.1':
+                return SchoolClass::where('name', 'P.2')->first();
+                break;
+            case 'P.2':
+                return SchoolClass::where('name', 'P.3')->first();
+                break;
+            case 'P.3':
+                return SchoolClass::where('name', 'P.4')->first();
+                break;
+            case 'P.4':
+                return SchoolClass::where('name', 'P.5')->first();
+                break;
+            case 'P.5':
+                return SchoolClass::where('name', 'P.6')->first();
+                break;
+            case 'P.6':
+                return SchoolClass::where('name', 'P.7')->first();
+                break;
+
+            default:
+                return null;
+                break;
+        }
     }
 }

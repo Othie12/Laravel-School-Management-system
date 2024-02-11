@@ -8,104 +8,29 @@ use Carbon\Carbon;
 
 class PeriodController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    public function resolve(){
+    public function show($name){
         $today = Carbon::now()->year;//First select the year we are in
-        $periods = Period::whereYear('date_from', $today)->get();
-        /*foreach($periods as $period){
-            echo $period->name;
-        }*/
+        $period = Period::whereYear('date_from', $today)->where('name', $name)->first();
 
-        if(count($periods) === 0){
-            return $this->create();
-        }else{
-            return $this->edit($periods);
-        }
+        return response()->json($period, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-        return view('periods.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $first_begin = $request->first_begin;
-        $first_end = $request->first_end;
-        $second_begin = $request->second_begin;
-        $second_end = $request->second_end;
-        $third_begin = $request->third_begin;
-        $third_end = $request->third_end;
-
-        //store terms, begining and end dates in the db
-        $term1 = Period::create([
-            'name' => 'First term',
-            'date_from' => $first_begin,
-            'date_to' => $first_end,
-        ]);
-
-        $term2 = Period::create([
-            'name' => 'Second term',
-            'date_from' => $second_begin,
-            'date_to' => $second_end,
-        ]);
-
-        $term3 = Period::create([
-            'name' => 'Third term',
-            'date_from' => $third_begin,
-            'date_to' => $third_end,
-        ]);
-
-        return redirect(route('period'))->with('status', 'successfuly created');
-
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($periods)
-    {
-        return view('periods.update', ['periods' => $periods]);
-    }
-
-    /**
-     * Update the specified period in storage.
-     */
-    public function update(Request $request)
-    {
-        //select all the periods from the database all periods that share the same year as now
-        $today = Carbon::now()->year;
-        $periods = Period::whereYear('date_from', $today)->get();
-
-        //update these periods in tha db
-        for ($period=0, $start=0, $end=0; $period < count($periods); $period++, $start++, $end++) {
-            $periods[$period]->date_from = $request->start[$start];
-            $periods[$period]->date_to = $request->end[$end];
-            $periods[$period]->save();
+        $message = 'Nothing Updated due to server error';
+        if($request->has('id')){
+            $period = Period::find($request->id);
+            $period->date_from = $request->date_from;
+            $period->date_to = $request->date_to;
+            $message = $period->save() ? $request->name . ' updated succesfuly': 'Error updating ' . $request->period['name'];
+        }else{
+            Period::create([
+                'name' => $request->name,
+                'date_from' => $request->date_from,
+                'date_to' => $request->date_to,
+            ]);
+            $message = $request->name . ' Created succesfuly';
         }
-        return redirect(route('period'))->with('status', 'successfuly saved');
+        return response()->json(['message' => $message], 200);
     }
-
 }

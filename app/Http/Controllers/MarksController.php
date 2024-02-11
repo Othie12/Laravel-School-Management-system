@@ -12,8 +12,22 @@ use App\Models\Students;
 
 class MarksController extends Controller
 {
+//insert new mark record if none has been recorded and update otherwise
+    public function resolve2(Request $request){
+        $subject_id = $request->subject_id;
+        $stdnt_id = $request->student_id;
+        $type = $request->type;
+        $mark = $request->mark;
+        $period = $request->period;
 
-
+        $student = Students::find($stdnt_id);
+        if($mid = $student->marks()->where('subject_id', $subject_id)->where('period_id', $period->id)->where('type', $type)->first()){
+            $this->update($mid, $mark);
+        }else{
+            $this->store($stdnt_id, $subject_id, $period->id, $type = $type, $mark);
+        }
+    }
+/*
     public function resolveStorage(Request $request)
     {
         $class_id = $request->class_id;
@@ -45,15 +59,14 @@ class MarksController extends Controller
         }
     return redirect()->back()->with('status', 'updated succesfuly');
     }
+*/
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(Request $request, $class_id)
+    public function specifiedMark(Request $request, string $student_id, string $subject_id, string $type)
     {
-        //
-        $clas = Auth::user()->classes()->find($class_id);
-        return view('marks.create', ['clas' => $clas, 'subjects' => Auth::user()->subjects, 'students' => $clas->students]);
+        $student = Students::find($student_id);
+        $period = $request->period;
+        $data = $student->marks()->where('subject_id', $subject_id)->where('period_id', $period->id)->where('type', $type)->first();
+        return response()->json($data, 200);
     }
 
     /**
@@ -71,38 +84,17 @@ class MarksController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
+        $mark = Mark::find($id);
+        if($mark)
+            return response()->json($mark, 200);
+        return response()->json('Mark not found', 404);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($marks, $class_id)
-    {
-        //
-        $clas = Auth::user()->classes()->find($class_id);
-        return view('marks.show', ['clas' => $clas,  'subjects' => Auth::user()->subjects]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update($mark, $mk)
     {
         $mark->mark = $mk;
         $mark->save();
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
     }
 }

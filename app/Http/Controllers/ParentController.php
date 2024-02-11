@@ -7,25 +7,17 @@ use App\Models\User;
 
 class ParentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(string $limit, string $offset)
     {
-        //
+        $parents = User::where('role', 'parent')->limit($limit)->offset($offset)->orderBy('name')->get();
+        return response()->json($parents, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('parent.create', ['parents' => User::where('role', 'parent')->get()]);
+    public function search(string $term){
+        $parents = User::where('role', 'parent')->where('name', 'like', '%'.$term.'%')->get();
+        return response()->json($parents, 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         //first validate
@@ -44,44 +36,32 @@ class ParentController extends Controller
             'role' => 'parent',
         ]);
 
+        if($parent){
+            return response()->json($parent, 200);
+        }
+        return response()->json(['error' => 'Failed to save parent'], 401);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
+        $parent = User::find($id);
+        if($parent){
+            return response()->json($parent, 200);
+        }
+        return response()->json(['error' => 'No parent with this id'], 404);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
-
-        $parent = Parents::find($request->parent_id);
+        $parent = Parents::find($id);
         $parent->name = $request->parent_name;
         $parent->email = $request->parent_email;
         $parent->sex = $request->parent_sex;
         $parent->contact = $request->parent_contact;
-        $parent->save();
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        if($parent->save()){
+            return response()->json($parent, 200);
+        }
+        return response()->json(['error' => 'Failed to save parent'], 401);
     }
 }
