@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('class', function (Blueprint $table) {
-            $table->decimal('fees', 15, 2)->default(0.0);
+            $table->bigInteger('fees_boarding')->default(0);
+            $table->bigInteger('fees_day')->default(0);
         });
     }
 

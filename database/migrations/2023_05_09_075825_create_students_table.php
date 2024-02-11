@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->char('sex', 1);
             $table->date('dob')->nullable();
+            $table->date('doj')->nullable();//date of joining
+            $table->date('dol')->nullable();//date of leaving
+            $table->string('section')->nullable();// either Day or Boarding
             $table->string('profile_pic_filepath')->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->unsignedBigInteger('class_id');

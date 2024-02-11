@@ -49,8 +49,11 @@ class ClassController extends Controller
     {
         $schoolClass = SchoolClass::find($id);
 
-        if($request->has('fees')){
-            $schoolClass->fees = $request->fees;
+        if($request->has('fees_boarding')){
+            $schoolClass->fees_boarding = $request->fees_boarding;
+        }
+        if($request->has('fees_day')){
+            $schoolClass->fees_day = $request->fees_day;
         }
 
         if($request->has('classteacher_id')){

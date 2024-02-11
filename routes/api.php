@@ -16,6 +16,7 @@ use App\Http\Controllers\RequirementController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\ApiUserController;
 use App\Http\Controllers\ParentController;
+use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Models\User;
 use App\Models\Period;
@@ -75,6 +76,8 @@ Route::get('/user/{id}', [UsersController::class, 'show']);
 
 Route::post('/people', [ApiUserController::class, 'store']);
 
+Route::post('/balance/{student_id}/{period_id}', [BalanceController::class, 'store']);
+
 Route::get('/subjects', [SubjectController::class, 'index']);
 Route::get('/subject/{id}', [SubjectController::class, 'show']);
 Route::post('/subject', [SubjectController::class, 'store']);
@@ -89,5 +92,11 @@ Route::get('/specifiedMark/{student_id}/{subject_id}/{type}', [MarksController::
 Route::post('/record-mark', [MarksController::class, 'resolve2'])->middleware('checkPeriod');
 
 Route::get('/payment/{id}', [PaymentController::class, 'show']);
-Route::get('/payment/searc-hash/{hash}', [PaymentController::class, 'searchByHash']);
+Route::get('/payment/search-hash/{hash}', [PaymentController::class, 'searchByHash']);
 Route::post('/payment/{student_id}', [PaymentController::class, 'store']);
+
+Route::patch('/user/{id}', [ProfileController::class, 'update']);
+Route::patch('/user-photo/{id}', [ProfileController::class, 'updatePhoto']);
+Route::patch('/user-password/{id}', [ProfileController::class, 'updatePassword']);
+Route::patch('/user-subjects/{id}', [ProfileController::class, 'updateSubjects']);
+Route::patch('/user-classes/{id}', [ProfileController::class, 'updateClasses']);

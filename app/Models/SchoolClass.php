@@ -10,7 +10,7 @@ class SchoolClass extends Model
     use HasFactory;
 
     protected $table = 'class';
-    protected $fillable = ['name', 'classteacher_id', 'fees'];
+    protected $fillable = ['name', 'classteacher_id', 'fees_day', 'fees_boarding'];
     protected $appends = ['girls', 'boys'];
     protected $guarded = ['id'];
 

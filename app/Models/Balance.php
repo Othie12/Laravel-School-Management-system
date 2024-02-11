@@ -22,4 +22,8 @@ class Balance extends Model
     public function Period(){
         return $this->belongsTo(Period::class, 'period_id');
     }
+
+    public function Payments(){
+        return $this->hasMany(Payment::class, 'balance_id');
+    }
 }

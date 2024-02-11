@@ -84,15 +84,7 @@ class UsersController extends Controller
             $user->profile_pic_filepath = $profilePicturePath;
             $user->save();
         }
-
-
-        //event(new Registered($user));
-
-        //Auth::login($user);
-
-        //return redirect(RouteServiceProvider::HOME);
         return $user ? response()->json('Registered succesfuly', 200) : response()->json('Failed to regiter user', 401);
-
     }
 
 

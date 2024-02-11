@@ -29,15 +29,18 @@ class StudentController extends Controller
 
     public function store(Request $request)
     {
-        //We're going to initialize the student's balance with the class fees
-        $balance = SchoolClass::find($request->class_id)->fees;
         $student = Students::create([
             'name' => $request->name,
             'sex' => $request->sex,
             'dob' => $request->dob,
+            'section' => $request->section,
             'class_id' => $request->class_id,
-            'balance' => $balance,
         ]);
+
+        if($student && $request->has('doj')){
+            $student->doj = $request->doj;
+            $student->save();
+        }
 
         //if the parent id has been provided, save it to the database
         if($student && !empty($request->parent_id)){
@@ -64,7 +67,7 @@ class StudentController extends Controller
 
     public function show(string $id)
     {
-        $student = Students::find($id)->load(['class', 'parent', 'payments']);
+        $student = Students::find($id)->load(['class', 'parent', 'payments', 'balanceObjs']);
         $student->append(['balance']);
         return $student ? response()->json($student, 200) : response()->json('Student not found', 401);
     }
@@ -81,14 +84,29 @@ class StudentController extends Controller
         if($request->has('dob')){
             $student->dob = $request->dob;
         }
+        if($request->has('doj')){
+            $student->doj = $request->doj;
+        }
+        if($request->has('dol')){
+            $student->dol = $request->dol;
+        }
         if($request->has('parent_id')){
-            $student->parent_id = $request->parent;
+            $student->parent_id = $request->parent_id;
         }
         if($request->has('class_id')){
             $student->class_id = $request->class_id;
         }
-        if($request->has('balance')){
-            $student->balance = $request->balance;
+        if($request->has('section')){
+            $student->section = $request->section;
+        }
+        if ($student && $request->hasFile('picture')) {
+            $profilePicturePath = $request->file('picture')->store('profile_pictures', 'public');
+
+            if(File::exists($student->profile_pic_filepath)){
+                File::delete($student->profile_pic_filepath);
+            }
+
+            $student->profile_pic_filepath = $profilePicturePath;
         }
 
         if($student->save()){

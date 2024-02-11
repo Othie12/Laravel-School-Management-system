@@ -49,18 +49,19 @@ class PaymentController extends Controller
                 $balanceObj = Balance::create([
                     'student_id' => $student_id,
                     'period_id' => $request->period_id,
-                    'balance' => $student->class->fees,
+                    'balance' => $student->section == 'Day' ? $student->class->fees_day : $student->class->fees_boarding,
                 ]);
             }
 
-            if($student){
+            if($student && $balanceObj){
                 $stored = Payment::create([
                     'student_id' => $student_id,
                     'amount' => $request->amount,
                     'period_id' => $request->period_id,
                     'balance' => $student->balance - $request->amount,
-                    'reason' => $request->reason,
-                    'payement_method' => $request->get('payement_method', 'Cash'),
+                    'comment' => $request->reason,
+                    'balance_id' => $balanceObj->id,
+                    'payement_method' => $request->payement_method,
                     'date_paid' => $request->get('date_paid', Carbon::now()),
                     'hash' => Hash::make($request->amount . $request->balance . $student_id . $today->toDateTimeString()),
                 ]);
@@ -70,35 +71,58 @@ class PaymentController extends Controller
                     $student->save();
                 }
             }
-            return $stored ? response()->json(['success' => 'Saved succesfuly'], 200) : response()->json(['error' => 'Failed to save succesfuly'], 500);
+            return $stored ? response()->json(['success' => 'Saved succesfuly'], 200) : response()->json(['error' => 'Failed to save'], 500);
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->errors()], 422);
         }
     }
 
     public function update(Request $request, string $id){
+        $count = 0;
        $item = Payment::find($id);
-       if($item){
+       if(!$item){
+           return response()->json(['error' => 'Record not found'], 404);
+        }
+
+        if($item->times_updated > 1){
+            return response()->json(['error' => 'Update limit reached'], 401);
+        }
+
         if($request->has('amount')){
-            if($student = Students::find($student_id)){
-                $item->amount = $request->amount;
-                $item->balance = $student->balance - $request->amount;
-                $student->balance = $student->balance - $request->amount;
+            $balanceObj = $item->BalanceObject;
+
+            $newAmount = $request->amount;
+            $oldAmount = $item->amount;
+
+            $error = $newAmount - $oldAmount;
+
+            if($student = Students::find($item->student_id)){
+                $item->amount = $newAmount;
+                $item->balance = $student->balance - $error;
+                $balanceObj->balance -= $error;
+                $balanceObj->save();
+                $count = 1;
+            }else{
+                return response()->json(['error' => 'Student not found'], 404);
             }
         }
+
         if($request->has('reason')){
-            $item->reason = $request->reason;
+            $item->comment = $request->reason;
         }
+
         if($request->has('payment_method')){
             $item->payment_method = $request->payment_method;
         }
+
         if($request->has('date_paid')){
             $item->date_paid = $request->date_paid;
+            $count = 1;
         }
+
+        $item->times_updated += $count;
         $item->save();
         return response()->json(['success' => 'Updated succesfuly'], 200);
-       }
-       return response()->json(['error' => 'Record not found'], 404);
     }
 
     public function show(string $id){

@@ -20,7 +20,6 @@ class BindPeriod
 
         $today = Carbon::now();
         if($period = Period::whereDate('date_from', '<=', $today)->whereDate('date_to', '>=', $today)->first()){
-            //$request->merge(['period_id' => $period->id]);
             $request->merge(['period' => $period]);
         }
 

@@ -20,16 +20,14 @@ class RequirementController extends Controller
         return response()->json($item, 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $req = Requirements::where('name', $request->name)->where('class_id', $request->class_id)->where('period_id', $request->period()->id)->first();
+        $period = $request->period;
+        $req = Requirements::where('name', $request->name)->where('class_id', $request->class_id)->where('period_id', $period->id)->first();
         if ($req === null) {
             $requirement = Requirements::create([
                 'class_id' => $request->class_id,
-                'period_id' =>$period = $request->period()->id,
+                'period_id' => $period->id,
                 'name' => $request->name,
                 'quantity' => $request->quantity,
                 'price' => $request->has('price') ? $request->price : '',

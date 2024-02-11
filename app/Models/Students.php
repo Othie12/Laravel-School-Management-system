@@ -22,6 +22,9 @@ class Students extends Model
         'name',
         'sex',
         'dob',
+        'doj',
+        'dol',
+        'section',
         'profile_pic_filepath',
         'parent_id',
         'class_id',
@@ -50,6 +53,15 @@ class Students extends Model
     public function getPeriodsAttribute()
     {
         $today = Carbon::now();
+        if($this->doj && $this->dol){
+            return Period::where('date_to', '>=', $this->doj)->where('date_from', '<=', $this->dol)->get();
+        }
+        if($this->doj && !$this->dol){
+            return Period::where('date_to', '>=', $this->doj)->where('date_from', '<=', $today)->get();
+        }
+        if(!$this->doj && $this->dol){
+            return Period::where('date_to', '>=', $this->created_at)->where('date_from', '<=', $this->dol)->get();
+        }
         return Period::where('date_to', '>=', $this->created_at)->where('date_from', '<=', $today)->get();
     }
 
@@ -114,7 +126,7 @@ class Students extends Model
     **/
     public function getBalanceAttribute(): int{
         $periods = $this->periods;
-        $classFees = $this->class->fees;
+        $classFees = $this->section === 'Day' ? $this->class->fees_day : $this->class->fees_boarding;
 
         $balance = $this->balanceObjectSum();
         foreach ($periods as $period) {
