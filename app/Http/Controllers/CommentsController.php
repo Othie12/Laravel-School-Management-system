@@ -10,81 +10,39 @@ use Illuminate\Support\Facades\Auth;
 class CommentsController extends Controller
 {
 
-    public function resolve()
-    {
-        $comments = Comments::where('class_id', Auth::user()->class->id)->get();
-
-        if(count($comments) === 0){
-            return $this->create();
-        }else{
-            return $this->edit($class_id = Auth::user()->class->id);
-        }
+    public function index(string $classId){
+        $comments = Comments::where('class_id', $classId)->get();
+        return response()->json($comments, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(Request $request, string $classId)
     {
-        return view('comments.create');
+        $stored = Comments::create([
+            'class_id' => $classId,
+            'agg_from' => $request->agg_from,
+            'agg_to' => $request->agg_to,
+            'ct_comm' => $request->ct_comm,
+            'ht_comm' => $request->ht_comm
+        ]);
+        return response()->json($stored, 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function update(Request $request, string $id)
     {
-        //
-        $from = 0;
-        $to = 10;
-        foreach ($request->comms as $comm) {
-            Comments::create([
-                'class_id' => Auth::user()->class->id,
-                'agg_from' => $from,
-                'agg_to' => $to,
-                'ct_comm' => $comm,
-            ]);
-            $from += 10;
-            $to += 10;
-        }
-        return redirect(route('comments'))->with('status', 'successfuly created');
+        $comment = Comments::find($id);
+
+        $comment->agg_from = $request->agg_from;
+        $comment->agg_to = $request->agg_to;
+        $comment->ct_comm = $request->ct_comm;
+        $comment->ht_comm = $request->ht_comm;
+        $comment->save();
+
+        return response()->json($comment, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $class_id)
-    {
-        return view('comments.edit', ['comments' => Comments::where('class_id', $class_id)->get()]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request)
-    {
-        //
-        $ids = $request->ids;
-        $htcomms = $request->htcomms;
-        $ctcomms = $request->ctcomms;
-        for($i = 0; $i < count($ids); $i++) {
-            $comment = Comments::find($ids[$i]);
-            if (Auth::user()->role === 'head_teacher') {
-                $comment->ht_comm = $htcomms[$i];
-                $comment->ct_comm = $ctcomms[$i];
-            }else{
-                $comment->ct_comm = $ctcomms[$i];
-            }
-            $comment->save();
-        }
-        return redirect()->back()->with('status', 'Updated successfully.');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        Comments::destroy($id);
+        return response()->json(['message' => 'deleted succesfuly'], 200);
     }
 }

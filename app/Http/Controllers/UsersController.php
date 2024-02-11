@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -7,25 +6,29 @@ use App\Models\User;
 use App\Models\Subject;
 use App\Models\SchoolClass;
 use App\Models\SubjectTeacher;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
 
 
-class RegisteredUserController extends Controller
+class UsersController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
         return view('auth.register', ['subjects' => Subject::all(), 'classes' => SchoolClass::all(), 'teachers' => User::where('role', '!=', 'parent')->get()]);
+    }
+
+    public function search(string $term){
+        $users = User::where('name', 'like', '%'.$term.'%')->limit('10')->get();
+        return response()->json($users, 200);
+    }
+
+    public function teachers(){
+        $teachers = User::where('role', '!=', 'parent')->doesntHave('class')->get();
+        return response()->json($teachers, 200);
     }
 
     /**
@@ -81,14 +84,13 @@ class RegisteredUserController extends Controller
             $user->profile_pic_filepath = $profilePicturePath;
             $user->save();
         }
-
-
-        //event(new Registered($user));
-
-        //Auth::login($user);
-
-        //return redirect(RouteServiceProvider::HOME);
         return $user ? response()->json('Registered succesfuly', 200) : response()->json('Failed to regiter user', 401);
+    }
 
+
+    public function show(string $id)
+    {
+        $user = User::find($id)->load(['class', 'classes', 'subjects', 'children']);
+        return $user ? response()->json($user, 200) : response()->json('User not found', 401);
     }
 }
