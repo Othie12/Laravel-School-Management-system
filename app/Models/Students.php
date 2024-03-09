@@ -89,7 +89,9 @@ class Students extends Model
             $markMid = $subject->marks->where('student_id', $this->id)->where('period_id', $period->id)->where('type', 'mid')->first();
             $markEnd = $subject->marks->where('student_id', $this->id)->where('period_id', $period->id)->where('type', 'end')->first();
             $gradeMid = $markMid !== null ? $markMid->grading()->grade : 9;
+            $remarkMid = $markMid !== null ? $markMid->grading()->remark : 'N/A';
             $gradeEnd = $markEnd !== null ? $markEnd->grading()->grade : 9;
+            $remarkMid = $markMid !== null ? $markEnd->grading()->remark : 'N/A';
             $agg = ($gradeMid + $gradeEnd) / 2;
             $mm = $markMid ? $markMid->mark : 0;
             $me = $markEnd ? $markEnd->mark : 0;
@@ -100,8 +102,9 @@ class Students extends Model
             array_push($subData, ['name' => $subject->name, 'subjectId' =>  $subject->id,
                         'markMidId' => $markMid ? $markMid->id : null,
                         'markEndId' => $markEnd ? $markEnd->id : null,
-                        'markMid' => $mm, 'aggMid' => $gradeMid, 'markEnd' => $me,
-                        'aggEnd' => $gradeEnd, 'mark' => ceil($mark), 'agg' => $agg]
+                        'markMid' => $mm, 'aggMid' => $gradeMid, 'remarkMid' => $remarkMid,
+                        'markEnd' => $me, 'aggEnd' => $gradeEnd, 'remarkEnd' => $remarkEnd,
+                        'mark' => ceil($mark), 'agg' => $agg]
             );
         }
         return $subData;
