@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Period;
 use App\Models\SchoolClass;
+use App\Models\Students;
 use Illuminate\View\View;
 use App\Providers\RouteServiceProvider;
 
@@ -22,6 +23,68 @@ class ClassController extends Controller
     public function getStudents(string $id){
         $students = SchoolClass::find($id)->students()->get();
         return response()->json($students, 200);
+    }
+
+    public function getStudentsWithMarks(Request $request, string $id, string $type){
+        $payload = [];
+        $students = SchoolClass::find($id)->students()->get();
+        foreach ($students as $student) {
+            array_push(
+                $payload,
+                [
+                    'student' => $student,
+                    'markData' => $student->atomicMarkData($request->period, $type),
+                ],
+            );
+        }
+        return response()->json($payload, 200);
+    }
+
+    public function divisionMetrics(Request $request, string $id, string $type){
+        $classItem = SchoolClass::find($id);
+        $payload = [];
+        $I = $II = $III = $IV = $U = 0;
+        $students = $classItem->students;
+
+        foreach ($students as $student) {
+            $division = $student->atomicMarkData($request->period, $type)['division'];
+            switch ($division) {
+                case 'I':
+                    $I++;
+                    break;
+
+                case 'II':
+                    $II++;
+                    break;
+
+                case 'III':
+                    $III++;
+                    break;
+
+                case 'IV':
+                    $IV++;
+                    break;
+
+                default:
+                    $U++;
+                    break;
+            }
+        }
+
+        $payload = [
+            ['division' => 'I', 'count' => $I],
+            ['division' => 'II', 'count' => $II],
+            ['division' => 'III', 'count' => $III],
+            ['division' => 'IV', 'count' => $IV],
+            ['division' => 'U', 'count' => $U],
+        ];
+
+        return response()->json($payload, 200);
+    }
+
+    public function getGradingPerSubject(Request $request, string $id, string $type){
+        $payload = SchoolClass::find($id)->gradesPerSubject($request->period->id, $type);
+        return response()->json($payload, 200);
     }
 
     public function getRequirements(Request $request, string $id){

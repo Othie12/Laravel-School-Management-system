@@ -30,7 +30,7 @@ class RequirementController extends Controller
                 'period_id' => $period->id,
                 'name' => $request->name,
                 'quantity' => $request->quantity,
-                'price' => $request->has('price') ? $request->price : '',
+                'price' => $request->has('price') ? $request->price : 0,
                 'compulsary' => $request->compulsary,
             ]);
             return response()->json('Created succesfuly', 200);

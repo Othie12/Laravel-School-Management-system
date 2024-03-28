@@ -84,7 +84,7 @@ class PaymentController extends Controller
            return response()->json(['error' => 'Record not found'], 404);
         }
 
-        if($item->times_updated > 1){
+        if($item->times_updated > 3){
             return response()->json(['error' => 'Update limit reached'], 401);
         }
 
@@ -101,7 +101,7 @@ class PaymentController extends Controller
                 $item->balance = $student->balance - $error;
                 $balanceObj->balance -= $error;
                 $balanceObj->save();
-                $count = 1;
+                $count = $count > 0 ? $count++ : 1;
             }else{
                 return response()->json(['error' => 'Student not found'], 404);
             }
@@ -117,7 +117,6 @@ class PaymentController extends Controller
 
         if($request->has('date_paid')){
             $item->date_paid = $request->date_paid;
-            $count = 1;
         }
 
         $item->times_updated += $count;

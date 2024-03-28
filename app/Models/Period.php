@@ -17,8 +17,13 @@ class Period extends Model
         'date_to',
     ];
 
-    public function nxt(): Period
+    public function nxt()//: Period
     {
-        return $this->name === 'Third term' ? Period::where('name', 'First term')->first() : Period::where('id', '>', $this->id)->first();
+        if($this->name == 'Third term')
+            return Period::where('name', 'First term')->first();
+        else if($this->name == 'First term')
+            return Period::where('date_from', '>', $this->date_from)->where('name', 'Second term')->first();
+        else if($this->name == 'Second term')
+            return Period::where('date_from', '>', $this->date_from)->where('name', 'Third term')->first();
     }
 }

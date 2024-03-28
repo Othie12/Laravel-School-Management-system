@@ -15,6 +15,7 @@ class SubjectController extends Controller
     /**
      * Display a listing of subjects
      */
+
     public function index()
     {
         $subjects = Subject::all();
@@ -23,6 +24,7 @@ class SubjectController extends Controller
 
     public function store(Request $request)
     {
+        return response()->json($request, 200);
 
         $subject = Subject::create([
             'name' => $request->name,

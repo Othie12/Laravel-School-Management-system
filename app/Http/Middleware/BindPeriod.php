@@ -17,6 +17,8 @@ class BindPeriod
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if($request->hasFile('picture'))
+            return $next($request);
 
         $today = Carbon::now();
         if($period = Period::whereDate('date_from', '<=', $today)->whereDate('date_to', '>=', $today)->first()){
