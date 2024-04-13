@@ -15,6 +15,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class StudentController extends Controller
 {
@@ -28,6 +29,62 @@ class StudentController extends Controller
     public function search(string $term){
         $students = Students::where('name', 'like', "%$term%")->limit(10)->get();
         return response()->json($students, 200);
+    }
+
+
+    public function batchExcelUpload(Request $request){
+        if(!$request->hasFile('excelfile')){
+            return response()->json(['message' => 'No excelfile detected'], 400);
+        }
+        $excelFile = $request->file('excelfile');
+        $spreadsheet = IOFactory::load($excelFile);
+
+        $successful = 0;
+        $uploaded = 0;
+        $invalidClass = 0;
+        $duplicate = 0;
+        $invalidSex = 0;
+        $invalidSection = 0;
+
+        $worksheet = $spreadsheet->getActiveSheet();
+        $rows = $worksheet->toArray();
+
+        foreach($rows as $row){
+            if(strtoupper($row[0]) == 'NAME') continue;
+            $uploaded++;
+
+            $name = $row[0];
+            $sex = strtolower($row[1]);
+            $section = $row[2];
+            $className = $row[3];
+            //$doj = $row[4];
+
+            if(strtoupper($section) === 'BOARDING') $section = 'Boarding';
+            if(strtoupper($section) === 'DAY') $section = 'Day';
+
+            $class = SchoolClass::where('name', $className)->first();
+            if(!$class) {$invalidClass++;continue;}
+            if(!($sex === 'm' || $sex === 'f')) {$invalidSex++; continue;}
+            if(!($section !== 'Boarding' || $section !== 'Day')) {$invalidSection++; continue;}
+            if($student = Students::where('name', $name)->first()){$duplicate++;continue;}
+
+            $student = Students::create([
+                'name' => $name,
+                'sex' => $sex,
+                'section' => $section,
+                'class_id' => $class->id,
+            ]);
+            if($student) $successful++;
+        }
+        $result = ['succesful' => $successful,
+                    'uploaded' => $uploaded,
+                    'failed' => $uploaded - $successful,
+                    'invalid_class' => $invalidClass,
+                    'duplicates' => $duplicate,
+                    'invalid_section' => $invalidSection,
+                    'invalid_sex' => $invalidSex,
+                ];
+        return response()->json($result, 200);
     }
 
     public function store(Request $request)
@@ -206,6 +263,7 @@ class StudentController extends Controller
         $period = Period::find($period_id);
         $mid = $student->atomicMarkData($period, 'mid');
         $end = $student->atomicMarkData($period, 'end');
+        $gradings = $student->class->gradings;
 
         $commentObj = Comments::where('agg_from', '<=', $end['totalMarks'])
                                 ->where('agg_to', '>=', $end['totalMarks'])->first();
@@ -229,8 +287,10 @@ class StudentController extends Controller
             'classteacher' => $classTeacher,
             'headteacher' => $headTeacher,
             'requirements' => $requirements,
+            'gradings' => $gradings,
         ];
 
         return response()->json($payload, 200);
     }
+
 }

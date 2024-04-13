@@ -42,6 +42,7 @@ Route::post('/login', [AuthController::class, 'login']);//->middleware('auth:san
 Route::get('/classes', [ClassController::class, 'index']);
 Route::get('/class/{id}', [ClassController::class, 'show']);
 Route::get('/class/students/{id}', [ClassController::class, 'getStudents']);
+Route::post('/class/registerStudentsViaExcel/{class_id}', [ClassController::class, 'registerClassStudentsViaExcel']);
 Route::get('/class/studentsWithMarks/{id}/{type}', [ClassController::class, 'getStudentsWithMarks']);
 Route::get('/class/gradingPerSubject/{id}/{type}', [ClassController::class, 'getGradingPerSubject']);
 Route::get('/class/divisionMetrics/{id}/{type}', [ClassController::class, 'divisionMetrics']);
@@ -73,6 +74,7 @@ Route::post('/period', [PeriodController::class, 'store']);
 
 Route::get('/student/mark-data/{id}', [StudentController::class, 'markData']);
 Route::post('/student', [StudentController::class, 'store']);
+Route::post('/batchExcelUpload', [StudentController::class, 'batchExcelUpload']);
 Route::patch('/student/{id}', [StudentController::class, 'update']);
 Route::patch('/student/photo/{id}', [StudentController::class, 'updatePhoto']);
 Route::get('/student/search/{term}', [StudentController::class, 'search']);

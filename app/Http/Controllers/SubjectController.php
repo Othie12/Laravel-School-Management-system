@@ -24,7 +24,7 @@ class SubjectController extends Controller
 
     public function store(Request $request)
     {
-        return response()->json($request, 200);
+        //return response()->json($request, 200);
 
         $subject = Subject::create([
             'name' => $request->name,

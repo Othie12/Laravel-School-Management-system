@@ -129,8 +129,9 @@ class Students extends Model
         $totalMarks = 0;
         foreach ($this->class->subjects as $subject){
             $item = $subject->marks->where('student_id', $this->id)->where('period_id', $period->id)->where('type', $type)->first();
-            $agg = $item !== null && $item->grading() !== null ? $item->grading()->grade : 0;
-            $remark = $item !== null && $item->grading() !== null ? $item->grading()->remark : 'N/A';
+            $agg = $item !== null && $item->grading() !== null ? $item->grading()->grade : 9;
+            $remark = $item !== null && $item->grading() !== null ? $item->grading()->remark : '';
+            $teacher = $subject->teachers->first() ? $subject->teachers->first()->name : "";
 
             $totalMarks = $item != null ? $item->mark + $totalMarks : $totalMarks;
 
@@ -142,7 +143,7 @@ class Students extends Model
                 $subData,
                 [
                     'name' => $subject->name, 'subjectId' =>  $subject->id,
-                    'mark' => $mark, 'agg' => $agg, 'remark' => $remark
+                    'mark' => $mark, 'agg' => $agg, 'remark' => $remark, 'teacher' => $teacher
                 ]
                 );
         }
