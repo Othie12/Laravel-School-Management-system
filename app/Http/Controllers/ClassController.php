@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Marks;
 use App\Models\Period;
 use App\Models\SchoolClass;
+use App\Models\Students;
 use Illuminate\View\View;
 use App\Providers\RouteServiceProvider;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
 
 
 class ClassController extends Controller
@@ -19,9 +23,151 @@ class ClassController extends Controller
         return response()->json($classes, 200);
     }
 
+    public function registerClassStudentsViaExcel(Request $request, string $class_id){
+        if(!$request->hasFile('excelfile'))
+            return response()->json(['message' => 'No excelfile detected'], 400);
+
+        $excelFile = $request->file('excelfile');
+        $spreadsheet = IOFactory::load($excelFile);
+
+        //row to start reading excel-file
+        $startIndex = 0;
+
+        $successful = 0;
+        $uploaded = 0;
+        $duplicate = 0;
+        $invalidSection = 0;
+        $invalidSex = 0;
+
+
+        $worksheet = $spreadsheet->getActiveSheet();
+        $rows = $worksheet->toArray();
+
+        //first get the row starting with 'NAME' cell, we'll start reading the
+        //excelfile from here
+        foreach ($rows as $index => $row) {
+            if(strtoupper($row[0]) == 'NAME'){
+                $startIndex = $index + 1;
+                break;
+            }else if($index == count($rows) - 1){
+                return response()->json(
+                    ['message' => 'We did not find any row starting with the NAME cell, Please make sure their
+                    is a column starting with the heading NAME. That is where the code starts reading']
+                    , 400);
+            }
+        }
+
+        for($i = $startIndex; $i < count($rows); $i++){
+            $row = $rows[$i];
+
+            $uploaded++;
+
+            $name = $row[0];
+            $sex = /*$row[1] ? strtolower($row[1]) :*/ 'm';
+            $section = /*$row[2] ? $row[2] :*/ 'Day';
+
+            if(strtoupper($section) === 'BOARDING') $section = 'Boarding';
+            if(strtoupper($section) === 'DAY') $section = 'Day';
+
+            if(!($sex === 'm' || $sex === 'f')) {$invalidSex++; continue;}
+            if(!($section !== 'Boarding' || $section !== 'Day')) {$invalidSection++; continue;}
+            if($student = Students::where('name', $name)->first()){$duplicate++;continue;}
+
+            $student = Students::create([
+                'name' => $name,
+                'sex' => $sex,
+                'section' => $section,
+                'class_id' => $class_id,
+            ]);
+            if($student) $successful++;
+        }
+        $result = ['succesful' => $successful,
+                    'uploaded' => $uploaded,
+                    'failed' => $uploaded - $successful,
+                    'duplicates' => $duplicate,
+                    'invalid_section' => $invalidSection,
+                    'invalid_sex' => $invalidSex,
+                ];
+        return response()->json($result, 200);
+    }
+
     public function getStudents(string $id){
-        $students = SchoolClass::find($id)->students()->get();
+        $students = SchoolClass::find($id)->students()->orderBy('name')->get();
         return response()->json($students, 200);
+    }
+
+    public function getStudentsWithMarks(Request $request, string $id, string $type){
+        $payload = [];
+        $students = SchoolClass::find($id)->students()->get();
+        foreach ($students as $student) {
+            array_push(
+                $payload,
+                [
+                    'student' => $student,
+                    'markData' => $student->atomicMarkData($request->period->id, $type),
+                ],
+            );
+        }
+        return response()->json($payload, 200);
+    }
+
+    public function divisionMetrics(Request $request, string $id, string $type){
+        $classItem = SchoolClass::find($id);
+        $pid = $request->has('period') ? $request->period->id : null;
+        $payload = [];
+        $I= 0;
+        $U = 0;
+        $II = 0;
+        $III = 0;
+        $IV = 0;
+        $students = $classItem->students;
+        if(!$pid) return([
+            ['division' => 'I', 'count' => $I],
+            ['division' => 'II', 'count' => $II],
+            ['division' => 'III', 'count' => $III],
+            ['division' => 'IV', 'count' => $IV],
+            ['division' => 'U', 'count' => $U],]
+        );
+
+        foreach ($students as $student) {
+            $division = $student->atomicMarkData($pid, $type)['division'];
+            switch (trim($division)) {
+                case 'I':
+                    $I++;
+                    break;
+
+                case "II":
+                    $II++;
+                    break;
+
+                case 'III':
+                    $III++;
+                    break;
+
+                case 'IV':
+                    $IV++;
+                    break;
+
+                default:
+                    $U++;
+                    break;
+            }
+        }
+
+        $payload = [
+            ['division' => 'I', 'count' => $I],
+            ['division' => 'II', 'count' => $II],
+            ['division' => 'III', 'count' => $III],
+            ['division' => 'IV', 'count' => $IV],
+            ['division' => 'U', 'count' => $U],
+        ];
+
+        return response()->json($payload, 200);
+    }
+
+    public function getGradingPerSubject(Request $request, string $id, string $type){
+        $payload = SchoolClass::find($id)->gradesPerSubject($request->period->id, $type);
+        return response()->json($payload, 200);
     }
 
     public function getRequirements(Request $request, string $id){
@@ -64,9 +210,102 @@ class ClassController extends Controller
         return response()->json($schoolClass, 200);
     }
 
-    public function destroy(string $id)
-    {
+    public function destroy(string $id){
         SchoolClass::destroy([$id]);
         return response()->json(['updated succesfully'], 200);
+    }
+
+    public function uploadMarksheetViaExcel(Request $request, string $class_id, string $type){
+        if(!$request->hasFile('excelfile')){
+            return response()->json(['message' => 'No excelfile detected'], 400);
+        }
+        if(!$request->has('period')){
+            return response()->json(['message' => 'You can not upload marks when the term is over. You
+            have to extend periods in the [academia > calendar] section'], 400);
+        }
+        $excelFile = $request->file('excelfile');
+        $period = $request->period;
+        $spreadsheet = IOFactory::load($excelFile);
+        $class = SchoolClass::find($class_id);
+        $students = $class->students;
+        $subjects = $class->subjects;
+
+        //row to start reading excel-file
+        $startIndex = 0;
+        //row where we shall find the subject names as headings
+        $headerRow = [];
+
+        $successful = 0;
+        $uploaded = 0;
+        $invalidNames = [];
+
+        $worksheet = $spreadsheet->getActiveSheet();
+        $rows = $worksheet->toArray();
+
+
+        //first get the row starting with 'NAME' cell, we'll start reading the
+        //excelfile from here
+        foreach ($rows as $index => $row) {
+            if(strtoupper($row[0]) == 'NAME'){
+                $headerRow = $row;//subject names are on this same row
+                $startIndex = $index + 1;//we'll start reading from the next row
+                break;
+            }else if($index == count($rows) - 1){
+                return response()->json(
+                    ['message' => 'We did not find any row starting with the NAME cell, Please make sure their
+                    is a column starting with the heading NAME. That is where the code starts reading']
+                    , 400);
+            }
+        }
+
+        $subjectIds = [0];
+        for($i = 1; $i < count($headerRow); $i++){
+            if(!$headerRow[$i]) break;
+            $subject = $subjects->where('name', $headerRow[$i])->first();
+            if(!$subject){
+                return response()->json(
+                    ["message" => "Subject named '" . $headerRow[$i] . "' not found in our database. Please check it's spelling", 'subjects' => $subjectIds],
+                    404);
+            }
+            $subjectIds[$i] = $subject->id;
+        }
+
+        for($i = $startIndex; $i < count($rows); $i++){
+            $row = $rows[$i];
+
+            $uploaded++;
+
+            $name = $row[0];
+
+            $student = $students->where('name', $name)->first();
+            if(!$student){
+                array_push($invalidNames, $name);
+                continue;
+            }
+
+            for($j = 1; $j < count($row); $j++) {
+                $mark = $row[$j];
+                if(!$mark) continue;
+                if(!$subjectIds[$j]) continue;
+
+                $subjectid = $subjectIds[$j];
+                $saved = $student->marks()->where('subject_id', $subjectid)->where('period_id', $period->id)->where('type', $type)->first();
+                if($saved && $saved->mark !== $mark){
+                    $saved->mark = $mark;
+                    $saved->save();
+                }else if(!$saved){
+                    Marks::create([
+                        'student_id' => $student->id,
+                        'subject_id' => $subjectid,
+                        'period_id'=> $period->id,
+                        'type' => $type,
+                        'mark' => $mark,
+                    ]);
+                }
+            }
+            $successful++;
+        }
+        $result = ['invalid_names' => $invalidNames, 'uploaded' => $uploaded, 'succesful' => $successful, 'failed' => $uploaded - $successful];
+        return response()->json($result, 200);
     }
 }
