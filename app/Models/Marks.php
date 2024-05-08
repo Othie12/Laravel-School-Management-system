@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Marks extends Model
 {
@@ -36,6 +37,13 @@ class Marks extends Model
     }
     public function grading()
     {
-        return Grading::where('marks_from', '<=', $this->mark)->where('marks_to', '>=', $this->mark)->first();
+        $mark = $this->mark;
+        $grading = DB::select("SELECT g.*, s.name FROM grading g JOIN students s JOIN class c
+                                ON c.id = g.class_id AND c.id = s.class_id WHERE s.id = ?
+                                AND g.marks_from <= ? AND g.marks_to >= ? LIMIT 1",
+                                [$this->student_id, $mark, $mark]);
+
+        return !empty($grading) ? $grading[0] : null;
+        //return Grading::where('marks_from', '<=', $this->mark)->where('marks_to', '>=', $this->mark)->first();
     }
 }

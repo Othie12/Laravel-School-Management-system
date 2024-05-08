@@ -5,6 +5,8 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
+//require_once __DIR__.'/public/index.html';
+
 /*
 |--------------------------------------------------------------------------
 | Check If The Application Is Under Maintenance

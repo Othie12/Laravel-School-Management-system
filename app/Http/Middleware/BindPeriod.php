@@ -17,9 +17,10 @@ class BindPeriod
      */
     public function handle(Request $request, Closure $next): Response
     {
-
         $today = Carbon::now();
         if($period = Period::whereDate('date_from', '<=', $today)->whereDate('date_to', '>=', $today)->first()){
+            $request->merge(['period' => $period]);
+        }else if($period = Period::whereDate('date_to', '<=', $today)->orderBy('date_to', 'DESC')->first()){
             $request->merge(['period' => $period]);
         }
 
