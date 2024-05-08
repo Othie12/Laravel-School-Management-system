@@ -43,6 +43,7 @@ Route::get('/classes', [ClassController::class, 'index']);
 Route::get('/class/{id}', [ClassController::class, 'show']);
 Route::get('/class/students/{id}', [ClassController::class, 'getStudents']);
 Route::post('/class/registerStudentsViaExcel/{class_id}', [ClassController::class, 'registerClassStudentsViaExcel']);
+Route::post('/class/uploadMarksheetViaExcel/{class_id}/{type}', [ClassController::class, 'uploadMarksheetViaExcel']);
 Route::get('/class/studentsWithMarks/{id}/{type}', [ClassController::class, 'getStudentsWithMarks']);
 Route::get('/class/gradingPerSubject/{id}/{type}', [ClassController::class, 'getGradingPerSubject']);
 Route::get('/class/divisionMetrics/{id}/{type}', [ClassController::class, 'divisionMetrics']);
@@ -51,6 +52,7 @@ Route::post('class/update/{id}', [ClassController::class, 'update']);
 
 Route::get('/gradings/{classId}', [GradingController::class, 'index']);
 Route::post('/gradings/{classId}', [GradingController::class, 'store']);
+Route::post('/gradings/createViaExcel/{class_id}', [GradingController::class, 'createViaExcel']);
 Route::patch('/gradings/{id}', [GradingController::class, 'update']);
 Route::delete('/gradings/{id}', [GradingController::class, 'destroy']);
 
@@ -76,8 +78,9 @@ Route::get('/student/mark-data/{id}', [StudentController::class, 'markData']);
 Route::post('/student', [StudentController::class, 'store']);
 Route::post('/batchExcelUpload', [StudentController::class, 'batchExcelUpload']);
 Route::patch('/student/{id}', [StudentController::class, 'update']);
-Route::patch('/student/photo/{id}', [StudentController::class, 'updatePhoto']);
+Route::post('/student/photo/{id}', [StudentController::class, 'updatePhoto']);
 Route::get('/student/search/{term}', [StudentController::class, 'search']);
+Route::delete('/students/{id}', [StudentController::class, 'destroy']);
 Route::get('/student/{id}', [StudentController::class, 'show']);
 Route::get('/student/reportcard/{id}/{period_id}', [StudentController::class, 'reportCard']);
 Route::get('/student/index/{limit}/{offset}', [StudentController::class, 'index']);
@@ -99,6 +102,7 @@ Route::patch('/subject/{id}', [SubjectController::class, 'update']);
 Route::get('/requirements', [RequirementController::class, 'index']);
 Route::get('/requirement/{id}', [RequirementController::class, 'show']);
 Route::post('/requirement', [RequirementController::class, 'store']);
+Route::post('/requirement/createViaExcel/{class_id}', [RequirementController::class, 'createViaExcel']);
 Route::patch('/requirement/{id}', [RequirementController::class, 'update']);
 
 Route::get('/specifiedMark/{student_id}/{subject_id}/{type}', [MarksController::class, 'specifiedMark']);

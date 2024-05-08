@@ -178,9 +178,10 @@ class StudentController extends Controller
 
     public function updatePhoto(Request $request, string $id)
     {
-
-        if(!$request->hasFile('picture'))
-            return response()->json(['message' => 'No picture detected'], 404);
+        //return response()->json($request, 200);
+        if(!$request->hasFile('pictureFile')){
+            return response()->json(['message' => 'No picture detected'], 400);
+        }
 
         // Get the student
         $student = Students::find($id);
@@ -194,7 +195,7 @@ class StudentController extends Controller
         }
 
         // Upload the new photo
-        $newPhotoPath = $request->file('picture')->store('profile_pictures', 'public');
+        $newPhotoPath = $request->file('pictureFile')->store('profile_pictures', 'public');
 
         // Update the student's profile photo with the new photo
         $student->profile_pic_filepath = $newPhotoPath;
@@ -240,30 +241,34 @@ class StudentController extends Controller
     }
 
 
-    public function destroy(Request $request)
+    public function destroy(Request $request, string $id)
     {
         $id = $request->id;
-        $request->validateWithBag('studentDeletion', [
+        /*$request->validateWithBag('studentDeletion', [
             'password' => ['required', 'current_password'],
-        ]);
+        ]);*/
 
         //
         $student = Students::find($id);
-        $student->delete();
-        return Redirect::to(route('dashboard'));
+        if($student->delete()){
+            return response()->json(['message' => "Deleted succesfuly"], 200);
+        }
+        return response()->json(['message' => "Failed to delete student"], 401);
     }
 
     public function markData(Request $request, string $id, string $type){
-        $data = Students::find($id)->atomicMarkData($request->period, $type);
+        $data = Students::find($id)->atomicMarkData($request->period->id, $type);
         return response()->json($data, 200);
     }
 
     public function reportCard(string $id, string $period_id){
         $student = Students::find($id);
         $period = Period::find($period_id);
-        $mid = $student->atomicMarkData($period, 'mid');
-        $end = $student->atomicMarkData($period, 'end');
+        $mid = $student->atomicMarkData($period_id, 'mid');
+        $end = $student->atomicMarkData($period_id, 'end');
         $gradings = $student->class->gradings;
+        $positionMid = $student->position($period_id, 'mid');
+        $positionEnd = $student->position($period_id, 'end');
 
         $commentObj = Comments::where('agg_from', '<=', $end['totalMarks'])
                                 ->where('agg_to', '>=', $end['totalMarks'])->first();
@@ -288,6 +293,8 @@ class StudentController extends Controller
             'headteacher' => $headTeacher,
             'requirements' => $requirements,
             'gradings' => $gradings,
+            'positionMid' => $positionMid,
+            'positionEnd' => $positionEnd,
         ];
 
         return response()->json($payload, 200);

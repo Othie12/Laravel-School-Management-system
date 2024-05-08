@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class Students extends Model
@@ -70,6 +71,14 @@ class Students extends Model
         return $this->hasMany(Attendance::class, 'student_id');
     }
 
+    public function total(string $period_id, string $type){
+        $total = DB::scalar("SELECT SUM(m.mark) FROM marks m JOIN students s ON m.student_id = s.id
+                            WHERE m.student_id = :student_id AND m.period_id = :period_id AND type = :mtype",
+                            ['student_id' => $this->id, 'period_id' => $period_id, 'mtype' => $type]);
+
+        return $total ? $total : 0;
+    }
+
     public function already_promoted()
     {
         if ($this->last_promoted) {
@@ -123,17 +132,17 @@ class Students extends Model
         return ['subdata' => $subData, 'totalMarks' => $totalMarks, 'totalAggMid' => $totalAggMid, 'totalAggEnd' => $totalAggEnd];
     }
 
-    public function atomicMarkData(Period $period, string $type){
+    public function atomicMarkData(string $period_id, string $type){
         $subData = [];
         $totalAgg = 0;
-        $totalMarks = 0;
-        foreach ($this->class->subjects as $subject){
-            $item = $subject->marks->where('student_id', $this->id)->where('period_id', $period->id)->where('type', $type)->first();
-            $agg = $item !== null && $item->grading() !== null ? $item->grading()->grade : 9;
-            $remark = $item !== null && $item->grading() !== null ? $item->grading()->remark : '';
-            $teacher = $subject->teachers->first() ? $subject->teachers->first()->name : "";
-
-            $totalMarks = $item != null ? $item->mark + $totalMarks : $totalMarks;
+        $totalMarks = $this->total($period_id, $type);
+        $class = $this->class;
+        foreach ($class->subjects as $subject){
+            $item = $subject->marks->where('student_id', $this->id)->where('period_id', $period_id)->where('type', $type)->first();
+            $gradingObj = $item !== null ? $item->grading(): null;
+            $agg = $gradingObj !== null ? $gradingObj->grade : 9;
+            $remark = $gradingObj !== null ? $gradingObj->remark : '';
+            $teacher = $subject->teacher($class->id);
 
             $totalAgg += $agg;
 
@@ -150,6 +159,22 @@ class Students extends Model
         $divisionObj = Division::where('aggs_from', '<=', $totalAgg)->where('aggs_to', '>=', $totalAgg)->first();
         $division = $divisionObj ? $divisionObj->division : null;
         return ['studentId' => $this->id, 'subdata' => $subData, 'totalMarks' => $totalMarks, 'totalAgg' => $totalAgg, 'division' => $division];
+    }
+
+    public function position(string $periodId, string $type){
+        $outof = 0;
+        $greater = 0;
+        $myTotal = $this->total($periodId, $type);
+        $classmates = $this->class->students;
+        foreach ($classmates as $mate) {
+            $outof++;
+            if($mate->total($periodId, $type) > $myTotal){
+                $greater++;
+            }
+        }
+
+        $result = ['position' => $greater + 1, 'outof' => $outof];
+        return $result;
     }
 
     public function payments(){

@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Marks;
 use App\Models\Period;
 use App\Models\SchoolClass;
 use App\Models\Students;
 use Illuminate\View\View;
 use App\Providers\RouteServiceProvider;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
 
 
 class ClassController extends Controller
@@ -60,8 +63,8 @@ class ClassController extends Controller
             $uploaded++;
 
             $name = $row[0];
-            $sex = $row[1] ? strtolower($row[1]) : 'm';
-            $section = $row[2] ? $row[2] : 'Day';
+            $sex = /*$row[1] ? strtolower($row[1]) :*/ 'm';
+            $section = /*$row[2] ? $row[2] :*/ 'Day';
 
             if(strtoupper($section) === 'BOARDING') $section = 'Boarding';
             if(strtoupper($section) === 'DAY') $section = 'Day';
@@ -89,7 +92,7 @@ class ClassController extends Controller
     }
 
     public function getStudents(string $id){
-        $students = SchoolClass::find($id)->students()->get();
+        $students = SchoolClass::find($id)->students()->orderBy('name')->get();
         return response()->json($students, 200);
     }
 
@@ -101,7 +104,7 @@ class ClassController extends Controller
                 $payload,
                 [
                     'student' => $student,
-                    'markData' => $student->atomicMarkData($request->period, $type),
+                    'markData' => $student->atomicMarkData($request->period->id, $type),
                 ],
             );
         }
@@ -110,18 +113,30 @@ class ClassController extends Controller
 
     public function divisionMetrics(Request $request, string $id, string $type){
         $classItem = SchoolClass::find($id);
+        $pid = $request->has('period') ? $request->period->id : null;
         $payload = [];
-        $I = $II = $III = $IV = $U = 0;
+        $I= 0;
+        $U = 0;
+        $II = 0;
+        $III = 0;
+        $IV = 0;
         $students = $classItem->students;
+        if(!$pid) return([
+            ['division' => 'I', 'count' => $I],
+            ['division' => 'II', 'count' => $II],
+            ['division' => 'III', 'count' => $III],
+            ['division' => 'IV', 'count' => $IV],
+            ['division' => 'U', 'count' => $U],]
+        );
 
         foreach ($students as $student) {
-            $division = $student->atomicMarkData($request->period, $type)['division'];
-            switch ($division) {
+            $division = $student->atomicMarkData($pid, $type)['division'];
+            switch (trim($division)) {
                 case 'I':
                     $I++;
                     break;
 
-                case 'II':
+                case "II":
                     $II++;
                     break;
 
@@ -195,13 +210,12 @@ class ClassController extends Controller
         return response()->json($schoolClass, 200);
     }
 
-    public function destroy(string $id)
-    {
+    public function destroy(string $id){
         SchoolClass::destroy([$id]);
         return response()->json(['updated succesfully'], 200);
     }
 
-    public function uploadMarksheetViaExcel(Request $request, string $id, string $type){
+    public function uploadMarksheetViaExcel(Request $request, string $class_id, string $type){
         if(!$request->hasFile('excelfile')){
             return response()->json(['message' => 'No excelfile detected'], 400);
         }
@@ -212,7 +226,7 @@ class ClassController extends Controller
         $excelFile = $request->file('excelfile');
         $period = $request->period;
         $spreadsheet = IOFactory::load($excelFile);
-        $class = SchoolClass::find($id);
+        $class = SchoolClass::find($class_id);
         $students = $class->students;
         $subjects = $class->subjects;
 
@@ -246,13 +260,14 @@ class ClassController extends Controller
 
         $subjectIds = [0];
         for($i = 1; $i < count($headerRow); $i++){
-            $subject = $subjects::where('name', $headerRow[$i])->first();
+            if(!$headerRow[$i]) break;
+            $subject = $subjects->where('name', $headerRow[$i])->first();
             if(!$subject){
                 return response()->json(
-                    ["message" => "Subject named '" + $headerRow[i] + "' not found in our database. Please check it's spelling"],
+                    ["message" => "Subject named '" . $headerRow[$i] . "' not found in our database. Please check it's spelling", 'subjects' => $subjectIds],
                     404);
             }
-            $subjectIds[i] = $subject->id;
+            $subjectIds[$i] = $subject->id;
         }
 
         for($i = $startIndex; $i < count($rows); $i++){
@@ -262,7 +277,7 @@ class ClassController extends Controller
 
             $name = $row[0];
 
-            $student = $students::where('name', $name)->first();
+            $student = $students->where('name', $name)->first();
             if(!$student){
                 array_push($invalidNames, $name);
                 continue;
@@ -290,7 +305,7 @@ class ClassController extends Controller
             }
             $successful++;
         }
-        $result = ['invalid_names' => $invalidNames, 'uploaded' => $uploaded, 'succesful' => $successful];
+        $result = ['invalid_names' => $invalidNames, 'uploaded' => $uploaded, 'succesful' => $successful, 'failed' => $uploaded - $successful];
         return response()->json($result, 200);
     }
 }
